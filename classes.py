@@ -1,5 +1,4 @@
-import functions
-class point():
-    def __init__(self, x = functions.genRandXLI(), y = functions.genRandYLI()):
+class Point():
+    def __init__(self, x, y):
         self.x = x
         self.y = y
