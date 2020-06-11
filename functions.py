@@ -28,10 +28,8 @@ def gen_rand_YLI():
     return round(random.uniform(y_lower, y_upper), dof)
 
 ###### Matching Functions ########
-# Matches the random k locations closest to person, returns the index of the location
-# Sample person = [40.24112, -73.12412]
-# Sample locations = [person, person, person]
-def match_rand(person, locations, k):
+# gets the k closests locations of a person
+def get_k_closest(person, locations, k):
     dists = []
     for loc in locations:
         dists.append(dist(person[0], loc[0], person[1], loc[1]))
@@ -41,7 +39,14 @@ def match_rand(person, locations, k):
     indices = []
     for i in range(k):
         indices.append(orig_dists.index(dists[i]))
-    return indices[random.randrange(0, k)]
+    return indices
+
+# Matches the random k locations closest to person, returns the index of the location
+# Sample person = [40.24112, -73.12412]
+# Sample locations = [person, person, person]
+def match_rand(person, locations, k):
+    return get_k_closest(person, locations, k)[random.randrange(0, k)]
+
 
 ####### Data Functions #########
 def get_data():

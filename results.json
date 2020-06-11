@@ -1,33 +1,31 @@
 {
     "Scenario_1": {
         "connected_component_sizes": {
-            "0": 14,
+            "0": 13,
             "1": 5,
             "2": 3,
-            "3": 1,
+            "3": 3,
             "4": 1,
             "5": 1,
             "6": 1,
             "7": 1,
             "8": 1,
-            "9": 1,
-            "10": 1
+            "9": 1
         },
-        "connected_components_count": 11,
+        "connected_components_count": 10,
         "num_coffeeshops": 10,
         "num_drugstores": 10,
         "num_people_in_components": {
-            "0": 7,
+            "0": 6,
             "1": 2,
             "2": 1,
-            "3": 0,
+            "3": 1,
             "4": 0,
             "5": 0,
             "6": 0,
             "7": 0,
             "8": 0,
-            "9": 0,
-            "10": 0
+            "9": 0
         },
         "num_ppl": 10
     },
@@ -58,6 +56,38 @@
             "7": 1,
             "8": 1,
             "9": 1
+        },
+        "num_ppl": 10
+    },
+    "Scenario_2_1": {
+        "connected_component_sizes": {
+            "0": 5,
+            "1": 3,
+            "2": 5,
+            "3": 3,
+            "4": 3,
+            "5": 3,
+            "6": 4,
+            "7": 1,
+            "8": 1,
+            "9": 1,
+            "10": 1
+        },
+        "connected_components_count": 11,
+        "num_coffeeshops": 10,
+        "num_drugstores": 10,
+        "num_people_in_components": {
+            "0": 2,
+            "1": 1,
+            "2": 2,
+            "3": 1,
+            "4": 1,
+            "5": 1,
+            "6": 2,
+            "7": 0,
+            "8": 0,
+            "9": 0,
+            "10": 0
         },
         "num_ppl": 10
     }
