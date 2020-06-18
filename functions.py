@@ -5,6 +5,7 @@ import copy
 import json 
 import numpy as np
 from scipy.sparse.csgraph import connected_components
+import networkx as nx
 ###### CONSTANTS ##########
 #Long Island Longitude
 x_lower = 40.589971
@@ -105,4 +106,11 @@ def gen_stats(n, G):
         infected_groups[result[1][i]] += 1
     stats['num_people_in_components'] = infected_groups
 
+    return stats
+def gen_stats_nx(nxG):
+    stats = {}
+    con_components = [len(c) for c in sorted(nx.connected_components(nxG), key=len, reverse=True)]
+    stats['connected_component_sizes'] = con_components
+    stats['connected_components_count'] = len(con_components)
+    stats['max_connected_component_size'] = max(con_components)
     return stats

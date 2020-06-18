@@ -2,12 +2,14 @@
 #Jason Huang
 import classes
 import functions
-from graph import Graph
+from graph import DisjointSetGraph
+from networkx import draw_networkx
+import networkx as nx
 
 ############################################### VARIABLES ###########################################
-n = 10 #number of people
-k = 3 # k random closest (For scenario 1)
-location_set = [10, 10] #Each item in this set represents the # of randomly generated locations for Coffee Shops, Drugstores, etc
+n = 20 #number of people
+k = 5 # k random closest (For scenario 1)
+location_set = [5, 5] #Each item in this set represents the # of randomly generated locations for Coffee Shops, Drugstores, etc
 
 
 ############################################# COMPONENTS ################################################
@@ -64,7 +66,6 @@ def scen1_1():
             C_sizes[j][lowest] += 1
             G[p][loc_index] = 1
             G[loc_index][p] = 1
-
             i += len(locations)
             j += 1
     stats = functions.gen_stats(n, G)
@@ -82,41 +83,55 @@ def scen2():
     G = []
     functions.initG(S, C, G) # Reset G
     vertices = len(S) + sum([len(i) for i in C])
-    gObj = Graph(vertices) # Graph Object
+    gObj = DisjointSetGraph(vertices) # Graph Object
     gObj.initVertices()
     for i in range(len(S)):
         locations_index = len(S)
+        prev_loc_index = -1
         for j in range(len(C)):
-            min_comp_loc = gObj.minConComp([locations_index + i for i in range(len(C[j]))])
+            min_comp_loc = gObj.getSmallestComponent([locations_index + i for i in range(len(C[j]))])
             min_comp_loc_index = min_comp_loc + locations_index
+            print(min_comp_loc_index)
+            if prev_loc_index > 0:
+                gObj.union(prev_loc_index, min_comp_loc_index)
+            prev_loc_index = min_comp_loc_index
             gObj.addEdge(i, min_comp_loc_index)
             locations_index += len(C[j])
-    G = gObj.compileToAdjMatrix()
-    stats = functions.gen_stats(n, G)
+        gObj.addPersonToShop(i, prev_loc_index)
+    # G = gObj.compileToAdjMatrix()
+    # g_random2 = nx.read_gml("./data/random2_25_05_04_05.gml")
+    stats = functions.gen_stats_nx(gObj.graph)
     stats['num_ppl'] = n
     stats['num_coffeeshops'] = len(C[0])
     stats['num_drugstores'] = len(C[1])
     data['Scenario_2'] = stats
+    draw_networkx(gObj.graph)
 
 
 ##################################### SCENARIO 2.1 ##############################################
 ### Minimize the component size within the nearest k stores
 def scen2_1():
+    print("Scenario 2")
     G = []
     functions.initG(S, C, G) # Reset G
     vertices = len(S) + sum([len(i) for i in C])
-    gObj = Graph(vertices) # Graph Object
+    gObj = DisjointSetGraph(vertices) # Graph Object
     gObj.initVertices()
     for i in range(len(S)):
         locations_index = len(S)
+        prev_loc_index = -1
         for j in range(len(C)):
             k_closest = functions.get_k_closest(S[i], C[j], k)
-            min_comp_loc = k_closest[gObj.minConComp([locations_index + k_closest[i] for i in range(len(k_closest))])]
+            min_comp_loc = k_closest[gObj.getSmallestComponent([locations_index + k_closest[i] for i in range(len(k_closest))])]
             min_comp_loc_index = min_comp_loc + locations_index
+            print(min_comp_loc_index)
+            if prev_loc_index > 0:
+                gObj.union(prev_loc_index, min_comp_loc_index)
+            prev_loc_index = min_comp_loc_index
             gObj.addEdge(i, min_comp_loc_index)
             locations_index += len(C[j])
-    G = gObj.compileToAdjMatrix()
-    stats = functions.gen_stats(n, G)
+        gObj.addPersonToShop(i, prev_loc_index)
+    stats = functions.gen_stats_nx(gObj.graph)
     stats['num_ppl'] = n
     stats['num_coffeeshops'] = len(C[0])
     stats['num_drugstores'] = len(C[1])
@@ -131,6 +146,6 @@ if __name__ == "__main__" :
     setup()
     scen1()
     scen2()
-    scen2_1()
+    #scen2_1()
     getStats()
 

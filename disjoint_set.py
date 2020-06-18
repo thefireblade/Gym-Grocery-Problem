@@ -27,8 +27,6 @@ class UnionGraph: #Changed from Graph to UnionGraph
         x_set = self.find_parent(parent, x) 
         y_set = self.find_parent(parent, y) 
         parent[x_set] = y_set 
-  
-   
    
     # The main function to check whether a given graph 
     # contains cycle or not 
