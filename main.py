@@ -24,7 +24,6 @@ G = [] #|C|-partite graph that contains the set locations
 ######################################################
 data = {}
 
-
 ############################################# SETUP ###################################################
 def setup():
     global n, location_set, S, C, G
@@ -91,7 +90,6 @@ def scen2():
         for j in range(len(C)):
             min_comp_loc = gObj.getSmallestComponent([locations_index + i for i in range(len(C[j]))])
             min_comp_loc_index = min_comp_loc + locations_index
-            print(min_comp_loc_index)
             if prev_loc_index > 0:
                 gObj.union(prev_loc_index, min_comp_loc_index)
             prev_loc_index = min_comp_loc_index
