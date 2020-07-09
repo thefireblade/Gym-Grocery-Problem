@@ -28,8 +28,12 @@ def stressTestScen2(n, k, location_set):
 
 def stressTestN(function, k, location_set):
     n = 2
-    for i in range(1000): 
-        time_elapsed = function(n, k, location_set)
+    for i in range(100000): 
+        time_elapsed = 0
+        try:
+            time_elapsed = function(n, k, location_set)
+        except:
+            break
         writeResults(i, time_elapsed, "{:e}".format(n), k, location_set)
         if(time_elapsed > 1800):
             break
@@ -46,9 +50,13 @@ def stressTestLocSize(function, n, k):
 
 def stressTestLocNum(function, n, k):
     x = 2
-    for i in range(1000): 
+    for i in range(100000): 
+        time_elapsed = 0
         location_set = [x, x]
-        time_elapsed = function(n, k, location_set)
+        try:
+            time_elapsed = function(n, k, location_set)
+        except:
+            break
         writeResults(i, time_elapsed, n, k, ["{:e}".format(x), "{:e}".format(x)])
         if(time_elapsed > 1800):
             break
@@ -57,5 +65,5 @@ def stressTestLocNum(function, n, k):
 if __name__ == "__main__" :
     # #k doesnn't matter with scen2
 	stressTestN(stressTestScen2, 5, [5, 5])
-	stressTestLocNum(stressTestScen2, 1000, 5)
+	stressTestLocNum(stressTestScen2, 100, 5)
 	# stressTestLocSize(stressTestScen2, 1000, 5)
