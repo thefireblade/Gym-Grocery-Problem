@@ -1,5 +1,7 @@
 import functions
 from graph import DisjointSetGraph
+from networkx import draw_networkx
+import networkx as nx
 class DrugStoreCoffeeShops():
     # Don't set 'S', 'C', 'G', 'data'
     def __init__(self, n = 20, k = 5, location_set = [5, 5]):
@@ -8,32 +10,33 @@ class DrugStoreCoffeeShops():
         self.location_set = location_set
         self.S = []
         self.C = []
-        self.G = []
+        self.G = nx.Graph()
         self.data = {}
 
     def setup(self):
         functions.initS(self.S, self.n)
         functions.genC(*self.location_set)
         self.C = functions.get_data()['C']
-        functions.initG(self.S, self.C, self.G)
+        # functions.initG(self.S, self.C, self.G)
+        self.G = nx.Graph()
 
     def runScen1(self):
         for p in range(len(self.S)):
             i = 0
             for l in range(len(self.C)):
                 loc_index = len(self.S) + i + functions.match_rand(self.S[p], self.C[l], self.k)
-                self.G[p][loc_index] = 1
-                self.G[loc_index][p] = 1
+                self.G.add_edge(p, loc_index)
                 i += len(self.C[l])
         ######### Get Stats #############
-        stats = functions.gen_stats(self.n, self.G)
+        # stats = functions.gen_stats(self.n, self.G)
+        stats = functions.gen_stats_nx(self.G)
         stats['num_ppl'] = self.n
         stats['num_coffeeshops'] = len(self.C[0])
         stats['num_drugstores'] = len(self.C[1])
         self.data['Scenario_1'] = stats
 
     def runScen2(self):
-        self.G = []
+        # self.G = []
         vertices = len(self.S) + sum([len(i) for i in self.C])
         gObj = DisjointSetGraph(vertices) # Graph Object
         gObj.initVertices()

@@ -17,7 +17,7 @@ S = [] #Set of people
 #Set of sets of distinct locations that people go to (C = [grocery, gym, coffee,etc.]) **Contains A and B
 C = [] 
 ## Adjacency Matrix ##
-G = [] #|C|-partite graph that contains the set locations 
+G = nx.Graph() #|C|-partite graph that contains the set locations 
 ## indices ###########################################
 # 0 -> |S| - 1 = people 
 # |S| -> |S| + Row-Major Order |locations| - 1 = shops/locations
@@ -30,7 +30,7 @@ def setup():
     functions.initS(S, n)
     functions.genC(*location_set)
     C = functions.get_data()['C']
-    functions.initG(S, C, G)
+    # functions.initG(S, C, G)
 
 
 ###################################### SCENARIO 1 ###################################################
@@ -40,11 +40,12 @@ def scen1():
         i = 0
         for l in range(len(C)):
             loc_index = len(S) + i + functions.match_rand(S[p], C[l], k)
-            G[p][loc_index] = 1
-            G[loc_index][p] = 1
+            # G[p][loc_index] = 1
+            # G[loc_index][p] = 1
+            G.add_edge(p, loc_index)
             i += len(C[l])
     ######### Get Stats #############
-    stats = functions.gen_stats(n, G)
+    stats = functions.gen_stats_nx(G) #functions.gen_stats(n, G)
     stats['num_ppl'] = n
     stats['num_coffeeshops'] = len(C[0])
     stats['num_drugstores'] = len(C[1])
@@ -53,8 +54,8 @@ def scen1():
 
 ##################################### SCENARIO 1.1 ####################################################
 def scen1_1():
-    G = []
-    functions.initG(S, C, G) # Reset G
+    G = nx.Graph()
+    #functions.initG(S, C, G) # Reset G
     C_sizes = [[0 for _ in locations] for locations in C]
     #### Greedy implementation taking into account the sizes ####
     for p in range(len(S)):
@@ -63,11 +64,13 @@ def scen1_1():
             lowest = C_sizes[j].index(min(C_sizes[j]))
             loc_index = lowest + i + len(S)
             C_sizes[j][lowest] += 1
-            G[p][loc_index] = 1
-            G[loc_index][p] = 1
+            # G[p][loc_index] = 1
+            # G[loc_index][p] = 1
+            G.add_edge(p, loc_index)
             i += len(locations)
             j += 1
-    stats = functions.gen_stats(n, G)
+    # stats = functions.gen_stats(n, G)
+    stats = functions.gen_stats_nx(G)
     stats['num_ppl'] = n
     stats['num_coffeeshops'] = len(C[0])
     stats['num_drugstores'] = len(C[1])
@@ -79,8 +82,8 @@ def scen1_1():
 ##################################### SCENARIO 2 ####################################################
 # #### Greedy implementation that matches the min components 
 def scen2():
-    G = []
-    functions.initG(S, C, G) # Reset G
+    # G = []
+    # functions.initG(S, C, G) # Reset G
     vertices = len(S) + sum([len(i) for i in C])
     gObj = DisjointSetGraph(vertices) # Graph Object
     gObj.initVertices()
@@ -103,15 +106,15 @@ def scen2():
     stats['num_coffeeshops'] = len(C[0])
     stats['num_drugstores'] = len(C[1])
     data['Scenario_2'] = stats
-    draw_networkx(gObj.graph)
+    # draw_networkx(gObj.graph)
 
 
 ##################################### SCENARIO 2.1 ##############################################
 ### Minimize the component size within the nearest k stores
 def scen2_1():
     print("Scenario 2")
-    G = []
-    functions.initG(S, C, G) # Reset G
+    # G = []
+    # functions.initG(S, C, G) # Reset G
     vertices = len(S) + sum([len(i) for i in C])
     gObj = DisjointSetGraph(vertices) # Graph Object
     gObj.initVertices()

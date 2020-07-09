@@ -21,7 +21,7 @@ class DisjointSetGraph():
     #Adds the vertices u and v to each edge set for the graph
     def addEdge(self,u,v): 
         self.graph.add_edge(u, v)
-        self.graph.add_edge(v, u)
+        # self.graph.add_edge(v, u)
 
     #Get the parent Node of specified node at index i
     def find(self, i):
