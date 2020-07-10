@@ -23,6 +23,9 @@ class DisjointSetGraph():
         self.graph.add_edge(u, v)
         # self.graph.add_edge(v, u)
 
+    def removeEdge(self, u, v): 
+        self.graph.remove_edge(u, v)
+
     #Get the parent Node of specified node at index i
     def find(self, i):
         if(self.nodes[i].parent == self.nodes[i].parent.parent):
@@ -30,6 +33,9 @@ class DisjointSetGraph():
         parent = self.find(self.nodes[i].parent.index)
         self.nodes[i].parent = parent
         return parent
+
+    def largestCC(self):
+        return len(max(nx.connected_components(self.graph), key=len))
 
     #Get the shop index 's1' and shop index 's2' and perform a union on the nodes 
     def union(self, s1, s2):
@@ -55,7 +61,7 @@ class DisjointSetGraph():
         mapped_parents = list(map(self.find, lst))
         mapped_components = list(map(self.getNodeSize, mapped_parents))
         return mapped_components.index(min(mapped_components))
-
+        
     #Adds a person at index 'p' to shop at index 's'
     #Makes a call to addEdge
     def addPersonToShop(self, p, s):

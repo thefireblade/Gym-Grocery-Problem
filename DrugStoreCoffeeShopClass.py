@@ -5,12 +5,12 @@ import networkx as nx
 class DrugStoreCoffeeShops():
     # Don't set 'S', 'C', 'G', 'data'
     def __init__(self, n = 20, k = 5, location_set = [5, 5]):
-        self.n = n
-        self.k = k
-        self.location_set = location_set
-        self.S = []
-        self.C = []
-        self.G = nx.Graph()
+        self.n = n # Number of people
+        self.k = k # Within a certain k number of shops
+        self.location_set = location_set # The locations that we are working with
+        self.S = [] # The set of people (To be initialized later)
+        self.C = []  # The set of distinct locations. Set of sets of distinct locations that people go to (C = [grocery, gym, coffee,etc.]) **Contains A and B
+        self.G = nx.Graph() # The graph that holds the connections
         self.data = {}
 
     def setup(self):
@@ -63,3 +63,44 @@ class DrugStoreCoffeeShops():
     def getStats(self):
         print(self.data)
         functions.export(self.data)
+
+    #Helper function for backtracking
+    def exhaustive(self, size, i, j, l1): 
+        if(i == len(self.S) or j == len(self.C)):
+            return -1
+        high = -1
+        for l in range(l1, len(self.C[j])):    
+            locations_index = len(self.S) + (sum([len(self.C[i]) for i in range(j)])) + l
+            self.exhaustG.addEdge(i, locations_index)
+            max_size = -1
+            if(j + 1 == len(self.C)):
+                max_size = self.exhaustive(self.exhaustG.largestCC(), i + 1, 0, l)
+            else:
+                max_size = self.exhaustive(self.exhaustG.largestCC(), i, j + 1, l)
+            if(max_size < high or high < 0 and max_size > 0):
+                high = max_size
+            #Backtrack
+            self.exhaustG.removeEdge(i, locations_index)
+        if(high < 0):
+            return size
+        return high
+
+    #Backtracking function
+    def exhaustive_main(self):
+        vertices = len(self.S) + sum([len(i) for i in self.C])
+        self.exhaustG = DisjointSetGraph(vertices) # Graph Object
+        self.exhaustG.initVertices()
+        max_size = -1
+        for l in range(len(self.C[0])):
+            locations_index = len(self.S) + l
+            self.exhaustG.addEdge(0, locations_index)
+            size = -1
+            if(1 == len(self.C)):
+                size = self.exhaustive(self.exhaustG.largestCC(), 1, 0, l)
+            else:
+                size = self.exhaustive(self.exhaustG.largestCC(), 0, 1, l)
+            if(max_size < 0 or max_size > size and size > 0):
+                max_size = size
+            #Backtrack
+            self.exhaustG.removeEdge(0, locations_index)
+        return max_size

@@ -1,6 +1,6 @@
 import time 
 from DrugStoreCoffeeShopClass import DrugStoreCoffeeShops
-time_limit = 1800
+time_limit = 300
 def writeResults(testNum, timeTaken, n, k, location_set):
     f = open("stressResults.txt", "a")
     f.write("Test #" + str(testNum) + ": num_ppl = " + str(n) + ", k = " + str(k) + ", locations = " 
@@ -28,12 +28,16 @@ def stressTestScen2(n, k, location_set):
 
 def stressTestN(function, k, location_set):
     n = 2
-    for i in range(1000): 
-        time_elapsed = function(n, k, location_set)
+    for i in range(500): 
+        time_elapsed = 0
+        try:
+            time_elapsed = function(n, k, location_set)
+        except:
+            break
         writeResults(i, time_elapsed, "{:e}".format(n), k, location_set)
         if(time_elapsed > 1800):
             break
-        n = n + 10
+        n = n * 2
 
 def stressTestLocSize(function, n, k):
     location_set = [10, 10]
@@ -46,16 +50,20 @@ def stressTestLocSize(function, n, k):
 
 def stressTestLocNum(function, n, k):
     x = 2
-    for i in range(1000): 
+    for i in range(500): 
+        time_elapsed = 0
         location_set = [x, x]
-        time_elapsed = function(n, k, location_set)
+        try:
+            time_elapsed = function(n, k, location_set)
+        except:
+            break
         writeResults(i, time_elapsed, n, k, ["{:e}".format(x), "{:e}".format(x)])
         if(time_elapsed > 1800):
             break
-        x = x + 10
+        x = x * 2
 
 if __name__ == "__main__" :
     # #k doesnn't matter with scen2
 	stressTestN(stressTestScen2, 5, [5, 5])
-	stressTestLocNum(stressTestScen2, 1000, 5)
+	stressTestLocNum(stressTestScen2, 100, 5)
 	# stressTestLocSize(stressTestScen2, 1000, 5)
