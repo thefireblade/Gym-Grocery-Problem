@@ -28,7 +28,11 @@ def stressTestScen2(n, k, location_set):
 
 def stressTestN(function, k, location_set):
     n = 2
+<<<<<<< HEAD
     for i in range(500): 
+=======
+    for i in range(100000): 
+>>>>>>> abe699092bd2049d25d6158c32cf9a75c48a0e8a
         time_elapsed = 0
         try:
             time_elapsed = function(n, k, location_set)
@@ -50,7 +54,11 @@ def stressTestLocSize(function, n, k):
 
 def stressTestLocNum(function, n, k):
     x = 2
+<<<<<<< HEAD
     for i in range(500): 
+=======
+    for i in range(100000): 
+>>>>>>> abe699092bd2049d25d6158c32cf9a75c48a0e8a
         time_elapsed = 0
         location_set = [x, x]
         try:
