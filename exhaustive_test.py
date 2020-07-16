@@ -26,6 +26,6 @@ def optimalSolution(n, k, location_set):
 
 if __name__ == "__main__" :
     # #k doesnn't matter with scen2
-    stressTestScen2(6, 4, [4, 4])
-    print(optimalSolution(6, 4, [4, 4]))
+    stressTestScen2(100, 5, [10, 10])
+    print(optimalSolution(100, 5, [10, 10]))
 	# stressTestLocSize(stressTestScen2, 1000, 5)

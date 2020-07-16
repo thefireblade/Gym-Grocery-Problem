@@ -60,6 +60,8 @@ class DisjointSetGraph():
     def getSmallestComponent(self, lst): 
         mapped_parents = list(map(self.find, lst))
         mapped_components = list(map(self.getNodeSize, mapped_parents))
+        print("The mapped index is : " + str(mapped_components.index(min(mapped_components))))
+        print("The min size is : " + str(min(mapped_components)))
         return mapped_components.index(min(mapped_components))
         
     #Adds a person at index 'p' to shop at index 's'

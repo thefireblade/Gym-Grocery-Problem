@@ -4,11 +4,13 @@ import classes
 import functions
 from graph import DisjointSetGraph
 from networkx import draw_networkx
+from DrugStoreCoffeeShopClass import DrugStoreCoffeeShops
+from DrugStoreCoffeeShopClass import PlottedStoreShops
 import networkx as nx
 
 ############################################### VARIABLES ###########################################
-n = 20 #number of people
-k = 5 # k random closest (For scenario 1)
+n = 25 #number of people
+k = 1 # k random closest (For scenario 1)
 location_set = [5, 5] #Each item in this set represents the # of randomly generated locations for Coffee Shops, Drugstores, etc
 
 
@@ -36,6 +38,7 @@ def setup():
 ###################################### SCENARIO 1 ###################################################
 #### Match up each person to a location in locations in C #########
 def scen1():
+    G = nx.Graph()
     for p in range(len(S)):
         i = 0
         for l in range(len(C)):
@@ -76,6 +79,12 @@ def scen1_1():
     stats['num_drugstores'] = len(C[1])
     data['Scenario_1_1'] = stats
 
+def exhaustive_scen():
+    obj = DrugStoreCoffeeShops(n, k, location_set)
+    obj.setup()
+    solution = obj.exhaustive_main()
+    print("Exhaustive best scenario: " + str(solution))
+
 
 
 
@@ -91,8 +100,9 @@ def scen2():
         locations_index = len(S)
         prev_loc_index = -1
         for j in range(len(C)):
-            min_comp_loc = gObj.getSmallestComponent([locations_index + i for i in range(len(C[j]))])
-            min_comp_loc_index = min_comp_loc + locations_index
+            location_indices = [i for i in range(len(C[j]))]
+            print(location_indices)
+            min_comp_loc_index = functions.getMinimizingIndex(i, location_indices, gObj, locations_index)
             if prev_loc_index > 0:
                 gObj.union(prev_loc_index, min_comp_loc_index)
             prev_loc_index = min_comp_loc_index
@@ -108,11 +118,9 @@ def scen2():
     data['Scenario_2'] = stats
     # draw_networkx(gObj.graph)
 
-
 ##################################### SCENARIO 2.1 ##############################################
 ### Minimize the component size within the nearest k stores
 def scen2_1():
-    print("Scenario 2")
     # G = []
     # functions.initG(S, C, G) # Reset G
     vertices = len(S) + sum([len(i) for i in C])
@@ -123,9 +131,7 @@ def scen2_1():
         prev_loc_index = -1
         for j in range(len(C)):
             k_closest = functions.get_k_closest(S[i], C[j], k)
-            min_comp_loc = k_closest[gObj.getSmallestComponent([locations_index + k_closest[i] for i in range(len(k_closest))])]
-            min_comp_loc_index = min_comp_loc + locations_index
-            print(min_comp_loc_index)
+            min_comp_loc_index = functions.getMinimizingIndex(i, k_closest, gObj, locations_index)
             if prev_loc_index > 0:
                 gObj.union(prev_loc_index, min_comp_loc_index)
             prev_loc_index = min_comp_loc_index
@@ -137,7 +143,7 @@ def scen2_1():
     stats['num_coffeeshops'] = len(C[0])
     stats['num_drugstores'] = len(C[1])
     data['Scenario_2_1'] = stats
-    
+
 ##################################### Finalize Stats #############################################
 def getStats():
     print(data)
@@ -145,8 +151,11 @@ def getStats():
 
 if __name__ == "__main__" :
     setup()
-    scen1()
+    # scen1()
     scen2()
-    #scen2_1()
+    # scen2_1()
+    # exhaustive_scen()
     getStats()
-
+    b = PlottedStoreShops(n, k, location_set)
+    b.setup()
+    b.animate()

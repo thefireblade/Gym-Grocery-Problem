@@ -52,6 +52,22 @@ def get_k_closest(person, locations, k):
         indices.append(orig_dists.index(dists[i]))
     return indices
 
+def getMinimizingIndex(person, locations, gObj, lastLocIndex):
+    min_size = -1
+    min_loc_index = -1
+    for i in locations:
+        loc_index = i + lastLocIndex
+        gObj.addEdge(person, loc_index)
+        largestCC = gObj.largestCC() #Largest connected component
+        if(min_size == -1 or min_loc_index == -1):
+            min_loc_index = loc_index
+            min_size = largestCC
+        else:
+            if(largestCC < min_size):
+                min_loc_index = loc_index
+                min_size = largestCC
+        gObj.removeEdge(person, loc_index)
+    return min_loc_index
 # Matches the random k locations closest to person, returns the index of the location
 # Sample person = [40.24112, -73.12412]
 # Sample locations = [person, person, person]
