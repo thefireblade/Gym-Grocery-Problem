@@ -103,7 +103,6 @@ def initS(S, n):
 
 def initG(S, C, G):
 	size = len(S)
-	print(size)
 	for locations in C:
 		size += len(locations)
 	for _ in range(size):

@@ -9,9 +9,9 @@ from DrugStoreCoffeeShopClass import PlottedStoreShops
 import networkx as nx
 
 ############################################### VARIABLES ###########################################
-n = 25 #number of people
+n = 4 #number of people
 k = 1 # k random closest (For scenario 1)
-location_set = [5, 5] #Each item in this set represents the # of randomly generated locations for Coffee Shops, Drugstores, etc
+location_set = [4, 5] #Each item in this set represents the # of randomly generated locations for Coffee Shops, Drugstores, etc
 
 
 ############################################# COMPONENTS ################################################
@@ -101,7 +101,6 @@ def scen2():
         prev_loc_index = -1
         for j in range(len(C)):
             location_indices = [i for i in range(len(C[j]))]
-            print(location_indices)
             min_comp_loc_index = functions.getMinimizingIndex(i, location_indices, gObj, locations_index)
             if prev_loc_index > 0:
                 gObj.union(prev_loc_index, min_comp_loc_index)
@@ -153,9 +152,9 @@ if __name__ == "__main__" :
     setup()
     # scen1()
     scen2()
-    # scen2_1()
-    # exhaustive_scen()
+    scen2_1()
+    exhaustive_scen()
     getStats()
-    b = PlottedStoreShops(n, k, location_set)
-    b.setup()
-    b.animate()
+    # b = PlottedStoreShops(n, k, location_set)
+    # b.setup()
+    # b.animate()
