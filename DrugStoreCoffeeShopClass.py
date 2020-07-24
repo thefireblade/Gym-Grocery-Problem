@@ -95,7 +95,6 @@ class DrugStoreCoffeeShops():
 
     #Backtracking function
     def exhaustive_main(self):
-        print("version 1.2")
         vertices = len(self.S) + sum([len(i) for i in self.C])
         self.exhaustG = DisjointSetGraph(vertices) # Graph Object
         self.exhaustG.initVertices()
@@ -149,7 +148,7 @@ class PlottedStoreShops(DrugStoreCoffeeShops):
             plt.plot(loc_1[0], loc_1[1], color='red', marker='o')
         
         plt.legend(loc="upper left")
-        self.runScen2_with_plt()
+        self.runScen2_2_with_plt()
         self.getStats()
         plt.show()
 
@@ -170,7 +169,7 @@ class PlottedStoreShops(DrugStoreCoffeeShops):
                 self.gObj.addEdge(i, min_comp_loc_index)
                 self.connectPLTNodes(self.S[i], self.C[j][min_comp_loc_index - locations_index])
                 locations_index += len(self.C[j])
-            plt.pause(0.5)    
+            plt.pause(1)    
             self.gObj.addPersonToShop(i, prev_loc_index)
         # G = gObj.compileToAdjMatrix()
         # g_random2 = nx.read_gml("./data/random2_25_05_04_05.gml")
@@ -200,9 +199,59 @@ class PlottedStoreShops(DrugStoreCoffeeShops):
                 prev_loc_index = min_comp_loc_index
                 self.gObj.addEdge(i, min_comp_loc_index)
                 self.connectPLTNodes(self.S[i], self.C[j][min_comp_loc_index - locations_index])
-                plt.pause(1)
                 locations_index += len(self.C[j])
+            plt.pause(1)
             self.gObj.addPersonToShop(i, prev_loc_index)
+        # G = gObj.compileToAdjMatrix()
+        # g_random2 = nx.read_gml("./data/random2_25_05_04_05.gml")
+        stats = functions.gen_stats_nx(self.gObj.graph)
+        stats['num_ppl'] = self.n
+        stats['num_coffeeshops'] = len(self.C[0])
+        stats['num_drugstores'] = len(self.C[1])
+        self.data['Scenario_2'] = stats
+
+        
+    def runScen2_2_with_plt(self):
+        vertices = len(self.S) + sum([len(i) for i in self.C])
+        self.gObj = DisjointSetGraph(vertices) # Graph Object
+        self.gObj.initVertices()
+        for j in range(len(self.C)):     
+            locations_index = len(self.S) + (sum([len(self.C[k]) for k in range(j)]))   
+            prev_loc_index = -1
+            for i in range(len(self.S)): 
+                k_closest = functions.get_k_closest(self.S[i], self.C[j], self.k)
+                min_comp_loc_index = functions.getMinimizingIndex(i, k_closest, self.gObj, locations_index)
+                if prev_loc_index > 0:
+                    self.gObj.union(prev_loc_index, min_comp_loc_index)
+                prev_loc_index = min_comp_loc_index
+                self.gObj.addEdge(i, min_comp_loc_index)
+                self.connectPLTNodes(self.S[i], self.C[j][min_comp_loc_index - locations_index])
+                plt.pause(1)
+        # G = gObj.compileToAdjMatrix()
+        # g_random2 = nx.read_gml("./data/random2_25_05_04_05.gml")
+        stats = functions.gen_stats_nx(self.gObj.graph)
+        stats['num_ppl'] = self.n
+        stats['num_coffeeshops'] = len(self.C[0])
+        stats['num_drugstores'] = len(self.C[1])
+        self.data['Scenario_2'] = stats
+        
+    #Maximize the connected component
+    def runScen0_2_with_plt(self):
+        vertices = len(self.S) + sum([len(i) for i in self.C])
+        self.gObj = DisjointSetGraph(vertices) # Graph Object
+        self.gObj.initVertices()
+        for j in range(len(self.C)):     
+            locations_index = len(self.S) + (sum([len(self.C[k]) for k in range(j)]))   
+            prev_loc_index = -1
+            for i in range(len(self.S)): 
+                k_closest = functions.get_k_closest(self.S[i], self.C[j], self.k)
+                min_comp_loc_index = functions.getMaximizingIndex(i, k_closest, self.gObj, locations_index)
+                if prev_loc_index > 0:
+                    self.gObj.union(prev_loc_index, min_comp_loc_index)
+                prev_loc_index = min_comp_loc_index
+                self.gObj.addEdge(i, min_comp_loc_index)
+                self.connectPLTNodes(self.S[i], self.C[j][min_comp_loc_index - locations_index])
+                plt.pause(1)
         # G = gObj.compileToAdjMatrix()
         # g_random2 = nx.read_gml("./data/random2_25_05_04_05.gml")
         stats = functions.gen_stats_nx(self.gObj.graph)
