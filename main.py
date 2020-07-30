@@ -9,7 +9,7 @@ from DrugStoreCoffeeShopClass import PlottedStoreShops
 import networkx as nx
 
 ############################################### VARIABLES ###########################################
-n = 10 #number of people
+n = 5 #number of people
 k = 3 # k random closest (For scenario 1)
 location_set = [4, 5] #Each item in this set represents the # of randomly generated locations for Coffee Shops, Drugstores, etc
 
@@ -133,6 +133,7 @@ def scen2_1():
             min_comp_loc_index = functions.getMinimizingIndex(i, k_closest, gObj, locations_index)
             if prev_loc_index > 0:
                 gObj.union(prev_loc_index, min_comp_loc_index)
+            gObj.union(i, min_comp_loc_index)
             prev_loc_index = min_comp_loc_index
             gObj.addEdge(i, min_comp_loc_index)
             locations_index += len(C[j])

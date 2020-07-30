@@ -1,12 +1,14 @@
 from collections import defaultdict 
 import networkx as nx
+import secrets
 
 class DisjointNode():
-    def __init__(self, rank, index, components = 1):
+    def __init__(self, rank, index, components = 0):
         self.parent = self
         self.rank = rank
         self.components = components
         self.index = index
+        self.color = secrets.token_hex(3) #Generate a random 6 digit Hex for color
 
 class DisjointSetGraph():
     def __init__(self, vertices):
@@ -37,6 +39,7 @@ class DisjointSetGraph():
     def largestCC(self):
         return len(max(nx.connected_components(self.graph), key=len))
 
+    #Part of the design, people aren't unioned to the shops but shops are unioned to a shop
     #Get the shop index 's1' and shop index 's2' and perform a union on the nodes 
     def union(self, s1, s2):
         top_parent = self.find(s1)
@@ -48,6 +51,7 @@ class DisjointSetGraph():
             bot_parent = top_parent
             top_parent = temp
         bot_parent.parent = top_parent
+        bot_parent.color = top_parent.color
         top_parent.rank += 1
         top_parent.components += bot_parent.components
     
@@ -66,9 +70,23 @@ class DisjointSetGraph():
         
     #Adds a person at index 'p' to shop at index 's'
     #Makes a call to addEdge
-    def addPersonToShop(self, p, s):
+    def addPersonToShop(self, p, s): #Currently doesn't use p anymore
         parent_s = self.find(s)
         parent_s.components += 1
+    
+    def getPeopleInComponents(self):
+        countList = []
+        trackerList = []
+        for i in range(self.V):
+            parent = self.find(i)
+            if(parent.components == 0):
+                continue
+            try:
+                trackerList.index(parent)
+            except:
+                trackerList.append(parent)
+                countList.append(parent.components)
+        return countList
 
     # deprecated code
     # #For vertices v in set, return the vertex v with the minimum connected component size 
