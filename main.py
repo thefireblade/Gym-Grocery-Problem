@@ -158,4 +158,6 @@ if __name__ == "__main__" :
     getStats()
     b = PlottedStoreShops(n, k, location_set)
     b.setup()
-    b.animate()
+    b.animate(b.runScen2_2_with_plt, 0.1)
+    b.resetGraph()
+    b.animate(b.runScen2_with_plt, 0.1)

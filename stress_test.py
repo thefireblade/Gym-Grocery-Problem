@@ -1,10 +1,15 @@
 import time 
 from DrugStoreCoffeeShopClass import DrugStoreCoffeeShops
-time_limit = 300
+time_limit = 900
 def writeResults(testNum, timeTaken, n, k, location_set):
     f = open("stressResults.txt", "a")
     f.write("Test #" + str(testNum) + ": num_ppl = " + str(n) + ", k = " + str(k) + ", locations = " 
             + str(location_set) + ", timeTaken = " + str(timeTaken) + " seconds\n")
+    f.close()
+    
+def write(string):
+    f = open("stressResults.txt", "a")
+    f.write(string)
     f.close()
 # n = 20 #number of people
 # k = 5 # k random closest (For scenario 1)
@@ -17,6 +22,7 @@ def stressTestScen1(n, k, location_set):
     obj.runScen1()
     del obj
     return time.perf_counter() - start
+
 def stressTestScen2(n, k, location_set):
     #time is in seconds   
     obj = DrugStoreCoffeeShops(n, k, location_set)
@@ -62,8 +68,58 @@ def stressTestLocNum(function, n, k):
             break
         x = x * 2
 
+def stressTestCompareScen2Scen2_2(k, n_0 = 10, ls_0 = 3, ls_1 = 3):
+    n = n_0
+    location_set = [ls_0, ls_1]
+    win = 0
+    loss = 0
+    tie = 0
+    for i in range(10000):
+        obj = DrugStoreCoffeeShops(n, k, location_set)
+        obj.setup()
+        
+        result_0 = -1 #The maximum returned component of function1
+        result_1 = -1 #The maximum returned compononent of function2
+        start = time.perf_counter()
+        try:
+            result_0 = obj.runScen2()
+            first_elapse = time.perf_counter() - start
+
+            # Write the results for scenario 2 (Pairing both shops to a person at a time)
+            writeResults(i, first_elapse, n, k, ["{:e}".format(x), "{:e}".format(x)])
+            
+            obj.resetGraph() #Reset the graph so we can compare to the second test
+
+            result_1 = obj.runScen2_2()
+            second_elapse = time.perf_counter() - first_elapse
+
+            # Write the results for scenario 2.2 (Pairing a shop to each person at a time)
+            writeResults(i, second_elapse, n, k, ["{:e}".format(x), "{:e}".format(x)])
+
+        except:
+            break
+        time_elapsed = time.perf_counter() - start
+        writeResults(i, time_elapsed, n, k, ["{:e}".format(x), "{:e}".format(x)])
+        if(result_0 == result_1):
+            tie += 1
+        else:
+            if(result_0 > result_1):
+                win += 1
+            else:
+                loss += 1
+        if(time_elapsed > 1800):
+            break
+        x = x * 2
+        n = n * 3
+        location_set = [location_set[0] * 2, location_set[1] * 2]
+        del obj # Delete the DrugStoreCoffeeShop Object after using it
+
+    write("Function 1 has {win} wins, {loss} losses, and {tie} ties over Function 2.".format(
+        win=win, loss=loss, tie=tie))
+
 if __name__ == "__main__" :
     # #k doesnn't matter with scen2
-	stressTestN(stressTestScen2, 5, [5, 5])
-	stressTestLocNum(stressTestScen2, 100, 5)
+	# stressTestN(stressTestScen2, 5, [5, 5])
+	# stressTestLocNum(stressTestScen2, 100, 5)
 	# stressTestLocSize(stressTestScen2, 1000, 5)
+    stressTestCompareScen2Scen2_2(3)
