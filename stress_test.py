@@ -75,6 +75,7 @@ def stressTestCompareScen2Scen2_2(k, n_0 = 10, ls_0 = 3, ls_1 = 3):
     loss = 0
     tie = 0
     for i in range(10000):
+        print("Commencing test #" + str(i))
         obj = DrugStoreCoffeeShops(n, k, location_set)
         obj.setup()
         
@@ -86,7 +87,7 @@ def stressTestCompareScen2Scen2_2(k, n_0 = 10, ls_0 = 3, ls_1 = 3):
             first_elapse = time.perf_counter() - start
 
             # Write the results for scenario 2 (Pairing both shops to a person at a time)
-            writeResults(i, first_elapse, n, k, ["{:e}".format(x), "{:e}".format(x)])
+            writeResults(i, first_elapse, "{:e}".format(n), k, ["{:e}".format(location_set[0]), "{:e}".format(location_set[1])])
             
             obj.resetGraph() #Reset the graph so we can compare to the second test
 
@@ -94,12 +95,12 @@ def stressTestCompareScen2Scen2_2(k, n_0 = 10, ls_0 = 3, ls_1 = 3):
             second_elapse = time.perf_counter() - first_elapse
 
             # Write the results for scenario 2.2 (Pairing a shop to each person at a time)
-            writeResults(i, second_elapse, n, k, ["{:e}".format(x), "{:e}".format(x)])
-
-        except:
+            writeResults(i, second_elapse, "{:e}".format(n), k, ["{:e}".format(location_set[0]), "{:e}".format(location_set[1])])
+            
+        except Exception as e: 
+            print(e)
             break
         time_elapsed = time.perf_counter() - start
-        writeResults(i, time_elapsed, n, k, ["{:e}".format(x), "{:e}".format(x)])
         if(result_0 == result_1):
             tie += 1
         else:
@@ -107,15 +108,15 @@ def stressTestCompareScen2Scen2_2(k, n_0 = 10, ls_0 = 3, ls_1 = 3):
                 win += 1
             else:
                 loss += 1
-        if(time_elapsed > 1800):
+        if(time_elapsed > time_limit * 2):
+            print("Time has elapsed over the time limit of " + str(time_limit * 2))
             break
-        x = x * 2
         n = n * 3
         location_set = [location_set[0] * 2, location_set[1] * 2]
         del obj # Delete the DrugStoreCoffeeShop Object after using it
 
     write("Function 1 has {win} wins, {loss} losses, and {tie} ties over Function 2.".format(
-        win=win, loss=loss, tie=tie))
+        win=str(win), loss=str(loss), tie=str(tie)))
 
 if __name__ == "__main__" :
     # #k doesnn't matter with scen2
