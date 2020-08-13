@@ -54,7 +54,6 @@ class DrugStoreCoffeeShops():
                 k_closest = functions.get_k_closest(self.S[i], self.C[j], self.k)
                 min_comp_loc_index = functions.getMinimizingIndex2(i, k_closest, self.gObj, locations_index)
                 self.gObj.union(i, min_comp_loc_index)
-                prev_loc_index = min_comp_loc_index
                 self.gObj.addEdge(i, min_comp_loc_index)
                 locations_index += len(self.C[j])
         stats = functions.gen_stats_nx(self.gObj.graph)
