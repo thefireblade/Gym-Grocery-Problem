@@ -15,6 +15,7 @@ class DisjointSetGraph():
         self.V = vertices #No. of vertices 
         self.graph = nx.Graph()
         self.nodes = [] # List of DisjointNodes
+        self.largestPeopleGroup = 0
 
     def initVertices(self):
         self.graph.add_nodes_from([i for i in range(self.V)])
@@ -54,7 +55,9 @@ class DisjointSetGraph():
         bot_parent.color = top_parent.color
         top_parent.rank += 1
         top_parent.components += bot_parent.components
-    
+        if(self.largestPeopleGroup < top_parent.components):
+            self.largestPeopleGroup = top_parent.components 
+        
     #Get the size of the specified node 'node'
     def getNodeSize(self, node):
         return node.components
@@ -64,8 +67,6 @@ class DisjointSetGraph():
     def getSmallestComponent(self, lst): 
         mapped_parents = list(map(self.find, lst))
         mapped_components = list(map(self.getNodeSize, mapped_parents))
-        print("The mapped index is : " + str(mapped_components.index(min(mapped_components))))
-        print("The min size is : " + str(min(mapped_components)))
         return mapped_components.index(min(mapped_components))
         
     #Adds a person at index 'p' to shop at index 's'
@@ -104,3 +105,26 @@ class DisjointSetGraph():
     #         for j in self.graph[i]:
     #             adjMatrix[i][j] = 1
     #     return adjMatrix
+
+# This class 
+# -removes the need to addPersonToShop
+# -Adds the ability to test a union of two nodes at indexes s1, s2
+class GymGroceryGraph(DisjointSetGraph):
+    def __init__(self, vertices, numPeople):
+        super().__init__(vertices)
+        self.numPeople = numPeople
+
+    # Initializes the graph except all people nodes have a component size of 1
+    def initVertices(self):
+        self.graph.add_nodes_from([i for i in range(self.V)])
+        self.nodes = [DisjointNode(0, i, 1) for i in range(self.numPeople)]  #People count as 1 component
+        self.nodes.extend([DisjointNode(0, i) for i in range(self.numPeople, self.V)]) # Shops
+    
+    # Returns the component size after a theoretical union of two nodes at index s1, and s2.
+    def testUnion(self, s1, s2):
+        top_parent = self.find(s1)
+        bot_parent = self.find(s2)
+        if(top_parent == bot_parent):
+            return top_parent.components
+        else:
+            return top_parent.components + bot_parent.components

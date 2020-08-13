@@ -69,6 +69,26 @@ def getMinimizingIndex(person, locations, gObj, lastLocIndex):
         gObj.removeEdge(person, loc_index)
     return min_loc_index
 
+# gObj must be of type GymGroceryGraph
+def getMinimizingIndex2(person, locations, gObj, lastLocIndex):
+    min_size = -1
+    min_loc_index = -1
+    for i in locations:
+        loc_index = i + lastLocIndex
+        # Get the largest number of people in a connected component
+        largestCC = gObj.testUnion(person, loc_index) if (
+            gObj.testUnion(person, loc_index)  > gObj.largestPeopleGroup
+        ) else gObj.largestPeopleGroup
+        
+        if(min_size == -1 or min_loc_index == -1):
+            min_loc_index = loc_index
+            min_size = largestCC
+        else:
+            if(largestCC < min_size):
+                min_loc_index = loc_index
+                min_size = largestCC
+    return min_loc_index
+
 def getMaximizingIndex(person, locations, gObj, lastLocIndex):
     min_size = -1
     min_loc_index = -1
@@ -84,6 +104,26 @@ def getMaximizingIndex(person, locations, gObj, lastLocIndex):
                 min_loc_index = loc_index
                 min_size = largestCC
         gObj.removeEdge(person, loc_index)
+    return min_loc_index
+
+# gObj must be of type GymGroceryGraph
+def getMaximizingIndex2(person, locations, gObj, lastLocIndex):
+    min_size = -1
+    min_loc_index = -1
+    for i in locations:
+        loc_index = i + lastLocIndex
+        # Get the largest number of people in a connected component
+        largestCC = gObj.testUnion(person, loc_index) if (
+            gObj.testUnion(person, loc_index) > gObj.largestPeopleGroup
+        ) else gObj.largestPeopleGroup
+
+        if(min_size == -1 or min_loc_index == -1):
+            min_loc_index = loc_index
+            min_size = largestCC
+        else:
+            if(largestCC > min_size):
+                min_loc_index = loc_index
+                min_size = largestCC
     return min_loc_index
 # Matches the random k locations closest to person, returns the index of the location
 # Sample person = [40.24112, -73.12412]

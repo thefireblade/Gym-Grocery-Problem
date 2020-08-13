@@ -1,5 +1,6 @@
 import functions
 from graph import DisjointSetGraph
+from graph import GymGroceryGraph
 from networkx import draw_networkx
 import networkx as nx
 import time
@@ -45,19 +46,18 @@ class DrugStoreCoffeeShops():
 
     def runScen2(self):
         vertices = len(self.S) + sum([len(i) for i in self.C])
-        self.gObj = DisjointSetGraph(vertices) # Graph Object
+        self.gObj = GymGroceryGraph(vertices, len(self.S)) # Graph Object
         self.gObj.initVertices()
         for i in range(len(self.S)):
             locations_index = len(self.S)
             prev_loc_index = -1
             for j in range(len(self.C)):        
                 k_closest = functions.get_k_closest(self.S[i], self.C[j], self.k)
-                min_comp_loc_index = functions.getMinimizingIndex(i, k_closest, self.gObj, locations_index)
+                min_comp_loc_index = functions.getMinimizingIndex2(i, k_closest, self.gObj, locations_index)
                 self.gObj.union(i, min_comp_loc_index)
                 prev_loc_index = min_comp_loc_index
                 self.gObj.addEdge(i, min_comp_loc_index)
                 locations_index += len(self.C[j])
-            self.gObj.addPersonToShop(i, prev_loc_index)
         stats = functions.gen_stats_nx(self.gObj.graph)
         stats['num_ppl'] = self.n
         stats['num_coffeeshops'] = len(self.C[0])
@@ -67,13 +67,13 @@ class DrugStoreCoffeeShops():
 
     def runScen2_2(self):
         vertices = len(self.S) + sum([len(i) for i in self.C])
-        self.gObj = DisjointSetGraph(vertices) # Graph Object
+        self.gObj = GymGroceryGraph(vertices, len(self.S)) # Graph Object
         self.gObj.initVertices()
         for j in range(len(self.C)):     
             locations_index = len(self.S) + (sum([len(self.C[k]) for k in range(j)]))   
             for i in range(len(self.S)): 
                 k_closest = functions.get_k_closest(self.S[i], self.C[j], self.k)
-                min_comp_loc_index = functions.getMinimizingIndex(i, k_closest, self.gObj, locations_index)
+                min_comp_loc_index = functions.getMinimizingIndex2(i, k_closest, self.gObj, locations_index)
                 self.gObj.union(i, min_comp_loc_index)
                 self.gObj.addEdge(i, min_comp_loc_index)
         stats = functions.gen_stats_nx(self.gObj.graph)
@@ -151,18 +151,21 @@ class PlottedStoreShops(DrugStoreCoffeeShops):
         plt.xlabel("Latitude")
         plt.plot(self.S[0][0], self.S[0][1], color='green', marker='o',
             label="Person")
+        # Plot all of the people onto the graph
         for person in self.S:
             plt.plot(person[0], person[1], color='green', marker='o')
 
         
         plt.plot(self.C[0][0][0], self.C[0][0][1], color='blue', marker='o',
             label="Drug Store")
+        # Plot all of the drug stores
         for loc_1 in self.C[0]:
             plt.plot(loc_1[0], loc_1[1], color='blue', marker='o')
 
         
         plt.plot(self.C[1][0][0], self.C[1][0][1], color='red', marker='o',
             label="Coffee Shop")
+        # Plot all of the coffee shops
         for loc_1 in self.C[1]:
             plt.plot(loc_1[0], loc_1[1], color='red', marker='o')
         
@@ -187,23 +190,18 @@ class PlottedStoreShops(DrugStoreCoffeeShops):
     #Go through every person and pair up a store and a coffee shop that works
     def runScen2_with_plt(self, timer = 0.1):
         vertices = len(self.S) + sum([len(i) for i in self.C])
-        self.gObj = DisjointSetGraph(vertices) # Graph Object
+        self.gObj = GymGroceryGraph(vertices, len(self.S)) # Graph Object
         self.gObj.initVertices()
         for i in range(len(self.S)):
             locations_index = len(self.S)
-            prev_loc_index = -1
             for j in range(len(self.C)):        
                 k_closest = functions.get_k_closest(self.S[i], self.C[j], self.k)
-                min_comp_loc_index = functions.getMinimizingIndex(i, k_closest, self.gObj, locations_index)
-                # if prev_loc_index > 0:
-                #     self.gObj.union(prev_loc_index, min_comp_loc_index)
+                min_comp_loc_index = functions.getMinimizingIndex2(i, k_closest, self.gObj, locations_index)
                 self.gObj.union(i, min_comp_loc_index)
-                prev_loc_index = min_comp_loc_index
                 self.gObj.addEdge(i, min_comp_loc_index)
                 self.connectPLTNodes(self.S[i], self.C[j][min_comp_loc_index - locations_index])
                 locations_index += len(self.C[j])
             plt.pause(timer)    
-            self.gObj.addPersonToShop(i, prev_loc_index)
         self.updateComponentGraph()
         plt.pause(timer)
         # G = gObj.compileToAdjMatrix()
@@ -248,13 +246,13 @@ class PlottedStoreShops(DrugStoreCoffeeShops):
     #Pair up each of the people separately with shops
     def runScen2_2_with_plt(self, timer = 0.1):
         vertices = len(self.S) + sum([len(i) for i in self.C])
-        self.gObj = DisjointSetGraph(vertices) # Graph Object
+        self.gObj = GymGroceryGraph(vertices, len(self.S)) # Graph Object
         self.gObj.initVertices()
         for j in range(len(self.C)):     
             locations_index = len(self.S) + (sum([len(self.C[k]) for k in range(j)]))   
             for i in range(len(self.S)): 
                 k_closest = functions.get_k_closest(self.S[i], self.C[j], self.k)
-                min_comp_loc_index = functions.getMinimizingIndex(i, k_closest, self.gObj, locations_index)
+                min_comp_loc_index = functions.getMinimizingIndex2(i, k_closest, self.gObj, locations_index)
                 self.gObj.union(i, min_comp_loc_index)
                 self.gObj.addEdge(i, min_comp_loc_index)
                 self.connectPLTNodes(self.S[i], self.C[j][min_comp_loc_index - locations_index])
@@ -265,6 +263,7 @@ class PlottedStoreShops(DrugStoreCoffeeShops):
         stats['num_ppl'] = self.n
         stats['num_coffeeshops'] = len(self.C[0])
         stats['num_drugstores'] = len(self.C[1])
+        stats['people_in_connected_components'] = self.gObj.getPeopleInComponents()
         self.data['Scenario_2_2'] = stats
         
     #Maximize the connected component
