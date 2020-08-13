@@ -50,7 +50,6 @@ class DrugStoreCoffeeShops():
         self.gObj.initVertices()
         for i in range(len(self.S)):
             locations_index = len(self.S)
-            prev_loc_index = -1
             for j in range(len(self.C)):        
                 k_closest = functions.get_k_closest(self.S[i], self.C[j], self.k)
                 min_comp_loc_index = functions.getMinimizingIndex2(i, k_closest, self.gObj, locations_index)
