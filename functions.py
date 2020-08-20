@@ -6,6 +6,10 @@ import json
 import numpy as np
 from scipy.sparse.csgraph import connected_components
 import networkx as nx
+
+###### GLOBALS ############
+ties = 0
+
 ###### CONSTANTS ##########
 # Long Island Longitude
 x_lower = 40.589971
