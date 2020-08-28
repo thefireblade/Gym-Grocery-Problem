@@ -1,6 +1,6 @@
 import time 
 from DrugStoreCoffeeShopClass import DrugStoreCoffeeShops
-time_limit = 900
+time_limit = 600
 def writeResults(testNum, timeTaken, n, k, location_set):
     f = open("stressResults.txt", "a")
     f.write("Test #" + str(testNum) + ": num_ppl = " + str(n) + ", k = " + str(k) + ", locations = " 
@@ -91,8 +91,9 @@ def stressTestCompareScen2Scen2_2(k, n_0 = 10, ls_0 = 3, ls_1 = 3):
             
             obj.resetGraph() #Reset the graph so we can compare to the second test
 
+            reset = time.perf_counter()
             result_1 = obj.runScen2_2()
-            second_elapse = time.perf_counter() - first_elapse
+            second_elapse = time.perf_counter() - reset
 
             # Write the results for scenario 2.2 (Pairing a shop to each person at a time)
             writeResults(i, second_elapse, "{:e}".format(n), k, ["{:e}".format(location_set[0]), "{:e}".format(location_set[1])])
@@ -114,9 +115,8 @@ def stressTestCompareScen2Scen2_2(k, n_0 = 10, ls_0 = 3, ls_1 = 3):
         n = n * 3
         location_set = [location_set[0] * 2, location_set[1] * 2]
         del obj # Delete the DrugStoreCoffeeShop Object after using it
-
-    write("Function 1 has {win} wins, {loss} losses, and {tie} ties over Function 2.".format(
-        win=str(win), loss=str(loss), tie=str(tie)))
+        write("Function 1 has {win} wins, {loss} losses, and {tie} ties over Function 2.\n".format(
+            win=str(win), loss=str(loss), tie=str(tie)))
 
 if __name__ == "__main__" :
     # #k doesnn't matter with scen2
