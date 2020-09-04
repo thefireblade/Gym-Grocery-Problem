@@ -1,4 +1,5 @@
 import time 
+import traceback
 from DrugStoreCoffeeShopClass import DrugStoreCoffeeShops
 time_limit = 600
 def writeResults(testNum, timeTaken, n, k, location_set):
@@ -92,13 +93,14 @@ def stressTestCompareScen2Scen2_2(k, n_0 = 10, ls_0 = 3, ls_1 = 3):
             obj.resetGraph() #Reset the graph so we can compare to the second test
 
             reset = time.perf_counter()
-            result_1 = obj.runScen2_2()
+            result_1 = obj.runScen2_3()
             second_elapse = time.perf_counter() - reset
 
             # Write the results for scenario 2.2 (Pairing a shop to each person at a time)
             writeResults(i, second_elapse, "{:e}".format(n), k, ["{:e}".format(location_set[0]), "{:e}".format(location_set[1])])
             
         except Exception as e: 
+            traceback.print_exc()
             print(e)
             break
         time_elapsed = time.perf_counter() - start

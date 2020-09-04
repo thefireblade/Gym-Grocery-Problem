@@ -81,6 +81,71 @@ class DrugStoreCoffeeShops():
         self.data['Scenario_2_2'] = stats
         return stats['max_connected_component_size']
 
+    # Contraints : There must be at least one shop of any type
+    # Perform a search on people and compare the 
+    def runScen2_3(self):
+        # Graph Object initialization
+        vertices = len(self.S) + sum([len(i) for i in self.C])
+        self.gObj = GymGroceryGraph(vertices, len(self.S)) # Graph Object 
+        self.gObj.initVertices()
+
+        tracker_map = {}
+        tracker_keys = []
+        # 2-D List construction
+        for i in range(len(self.C)):
+            shop_list = []
+            for person in range(len(self.S)):
+                shop_list.append(person)
+            tracker_map[i] = shop_list
+            tracker_keys.append(i)
+
+        while(tracker_map): #Check if the map is not empty
+            best_pick_person = -1 #Get the first index existing in the list
+            best_pick_shop = -1 #Assume there is atleast one shop to connect the person to
+            best_key = tracker_keys[0]
+            # Track the largest number of people in a connected component
+            largestCC = len(self.S) #Worst case scenario
+
+            for key in tracker_keys:
+                for person in tracker_map[key]:
+                    # Check every location for that person
+                    locations_index = len(self.S) + (sum([len(self.C[i]) for i in range(key)]))     
+                    k_closest = functions.get_k_closest(self.S[person], self.C[key], self.k)
+                    # print(locations_index)
+                    min_comp_loc_index = functions.getMinimizingIndex2(person, k_closest, self.gObj, locations_index)
+                    
+                    # Get the largest number of people connected in tested component
+                    testedCC = self.gObj.testUnion(person, min_comp_loc_index) if (
+                        self.gObj.testUnion(person, min_comp_loc_index)  > self.gObj.largestPeopleGroup
+                    ) else self.gObj.largestPeopleGroup
+                    # Debug prints
+                    # print("Person : " + str(person) + " and location " + str(key))
+                    # print("testCC = " + str(testedCC))
+                    # print("largestCC = " + str(largestCC))
+                    if(largestCC == len(self.S) or testedCC < largestCC or best_pick_person == -1):
+                        # print("The best person is now " + str(person) + " with location " + str(min_comp_loc_index))
+                        largestCC = testedCC
+                        best_pick_person = person
+                        best_pick_shop = min_comp_loc_index 
+                        best_key = key
+
+            self.gObj.union(best_pick_person, best_pick_shop)
+            self.gObj.addEdge(best_pick_person, best_pick_shop)
+            tracker_map[best_key].remove(best_pick_person)
+            # print("The largestCC is now : " + str(self.gObj.largestPeopleGroup))
+            if(len(tracker_map[best_key]) == 0):
+                # print("The key " + str(best_key) + " is now empty!")
+                del tracker_map[best_key] # Delete the shoplist within the key index
+                tracker_keys.remove(best_key)
+        stats = functions.gen_stats_nx(self.gObj.graph)
+        stats['num_ppl'] = self.n
+        stats['num_coffeeshops'] = len(self.C[0])
+        stats['num_drugstores'] = len(self.C[1])
+        stats['people_in_connected_components'] = self.gObj.getPeopleInComponents()
+        self.data['Scenario_2_3'] = stats
+        return stats['max_connected_component_size']
+
+
     def getStats(self):
         print(self.data)
         functions.export(self.data)
