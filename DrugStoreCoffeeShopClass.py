@@ -5,6 +5,7 @@ from networkx import draw_networkx
 import networkx as nx
 import time
 import matplotlib.pyplot as plt
+from collections import deque
 
 class DrugStoreCoffeeShops():
     # Don't set 'S', 'C', 'G', 'data'
@@ -60,6 +61,7 @@ class DrugStoreCoffeeShops():
         stats['num_ppl'] = self.n
         stats['num_coffeeshops'] = len(self.C[0])
         stats['num_drugstores'] = len(self.C[1])
+        stats['max_connected_component_size'] = self.gObj.largestPeopleGroup
         self.data['Scenario_2'] = stats
         return stats['max_connected_component_size']
 
@@ -78,6 +80,7 @@ class DrugStoreCoffeeShops():
         stats['num_ppl'] = self.n
         stats['num_coffeeshops'] = len(self.C[0])
         stats['num_drugstores'] = len(self.C[1])
+        stats['max_connected_component_size'] = self.gObj.largestPeopleGroup
         self.data['Scenario_2_2'] = stats
         return stats['max_connected_component_size']
 
@@ -90,6 +93,7 @@ class DrugStoreCoffeeShops():
         self.gObj.initVertices()
 
         tracker_map = {}
+        k_closest_map = {}
         tracker_keys = []
         # 2-D List construction
         for i in range(len(self.C)):
@@ -98,6 +102,11 @@ class DrugStoreCoffeeShops():
                 shop_list.append(person)
             tracker_map[i] = shop_list
             tracker_keys.append(i)
+
+        # Table every starting index of every key
+        key_index_map = {}
+        for key in tracker_keys:
+            key_index_map[key] = sum([len(self.C[i]) for i in range(key)])
 
         while(tracker_map): #Check if the map is not empty
             best_pick_person = -1 #Get the first index existing in the list
@@ -109,11 +118,19 @@ class DrugStoreCoffeeShops():
             for key in tracker_keys:
                 for person in tracker_map[key]:
                     # Check every location for that person
-                    locations_index = len(self.S) + (sum([len(self.C[i]) for i in range(key)]))     
-                    k_closest = functions.get_k_closest(self.S[person], self.C[key], self.k)
+                    locations_index = len(self.S) + key_index_map[key]  
+                    
+                    k_closest = []
+                    # Tabulate the k_closest (Initially runs in O(n) time)
+                    if f"{person}_{key}" not in k_closest_map.keys():
+                        k_closest_map[f"{person}_{key}"] = functions.get_k_closest(self.S[person], self.C[key], self.k)
+                    k_closest = k_closest_map[f"{person}_{key}"]
+
                     # print(locations_index)
+                    # Get the optimum connection for this person and list of k_closest (Runs O(k) time)
                     min_comp_loc_index = functions.getMinimizingIndex2(person, k_closest, self.gObj, locations_index)
                     
+                    # Everything here runs in O(1) time
                     # Get the largest number of people connected in tested component
                     testedCC = self.gObj.testUnion(person, min_comp_loc_index) if (
                         self.gObj.testUnion(person, min_comp_loc_index)  > self.gObj.largestPeopleGroup
@@ -142,6 +159,7 @@ class DrugStoreCoffeeShops():
         stats['num_coffeeshops'] = len(self.C[0])
         stats['num_drugstores'] = len(self.C[1])
         stats['people_in_connected_components'] = self.gObj.getPeopleInComponents()
+        stats['max_connected_component_size'] = self.gObj.largestPeopleGroup
         self.data['Scenario_2_3'] = stats
         return stats['max_connected_component_size']
 
@@ -234,6 +252,68 @@ class PlottedStoreShops(DrugStoreCoffeeShops):
         
         plt.legend(loc="upper left")
         function(timer)
+        self.getStats()
+        plt.show()
+
+    def animateConcurrent(self, function, function2, timer = 0.1):
+        plt.figure(1)
+        plt.xlim(40.589971, 41.139365)
+        plt.ylim(-73.768044, -72.225494)
+        plt.title("Function 1")
+        plt.ylabel("Longitude")
+        plt.xlabel("Latitude")
+        plt.plot(self.S[0][0], self.S[0][1], color='green', marker='o',
+            label="Person")
+        # Plot all of the people onto the graph
+        for person in self.S:
+            plt.plot(person[0], person[1], color='green', marker='o')
+
+        
+        plt.plot(self.C[0][0][0], self.C[0][0][1], color='blue', marker='o',
+            label="Drug Store")
+        # Plot all of the drug stores
+        for loc_1 in self.C[0]:
+            plt.plot(loc_1[0], loc_1[1], color='blue', marker='o')
+
+        
+        plt.plot(self.C[1][0][0], self.C[1][0][1], color='red', marker='o',
+            label="Coffee Shop")
+        # Plot all of the coffee shops
+        for loc_1 in self.C[1]:
+            plt.plot(loc_1[0], loc_1[1], color='red', marker='o')
+        
+        plt.legend(loc="upper left")
+        function(timer)
+        self.getStats()
+
+        plt.figure(2)
+        plt.xlim(40.589971, 41.139365)
+        plt.ylim(-73.768044, -72.225494)
+        plt.title("Function 2")
+        plt.ylabel("Longitude")
+        plt.xlabel("Latitude")
+        plt.plot(self.S[0][0], self.S[0][1], color='green', marker='o',
+            label="Person")
+        # Plot all of the people onto the graph
+        for person in self.S:
+            plt.plot(person[0], person[1], color='green', marker='o')
+
+        
+        plt.plot(self.C[0][0][0], self.C[0][0][1], color='blue', marker='o',
+            label="Drug Store")
+        # Plot all of the drug stores
+        for loc_1 in self.C[0]:
+            plt.plot(loc_1[0], loc_1[1], color='blue', marker='o')
+
+        
+        plt.plot(self.C[1][0][0], self.C[1][0][1], color='red', marker='o',
+            label="Coffee Shop")
+        # Plot all of the coffee shops
+        for loc_1 in self.C[1]:
+            plt.plot(loc_1[0], loc_1[1], color='red', marker='o')
+        
+        plt.legend(loc="upper left")
+        function2(timer)
         self.getStats()
         plt.show()
 
@@ -362,6 +442,7 @@ class PlottedStoreShops(DrugStoreCoffeeShops):
         self.gObj.initVertices()
 
         tracker_map = {}
+        k_closest_map = {}
         tracker_keys = []
         # 2-D List construction
         for i in range(len(self.C)):
@@ -370,6 +451,11 @@ class PlottedStoreShops(DrugStoreCoffeeShops):
                 shop_list.append(person)
             tracker_map[i] = shop_list
             tracker_keys.append(i)
+
+        # Table every starting index of every key
+        key_index_map = {}
+        for key in tracker_keys:
+            key_index_map[key] = sum([len(self.C[i]) for i in range(key)])
 
         while(tracker_map): #Check if the map is not empty
             best_pick_person = -1 #Get the first index existing in the list
@@ -382,11 +468,19 @@ class PlottedStoreShops(DrugStoreCoffeeShops):
             for key in tracker_keys:
                 for person in tracker_map[key]:
                     # Check every location for that person
-                    locations_index = len(self.S) + (sum([len(self.C[i]) for i in range(key)]))     
-                    k_closest = functions.get_k_closest(self.S[person], self.C[key], self.k)
+                    locations_index = len(self.S) + key_index_map[key]  
+                    
+                    k_closest = []
+                    # Tabulate the k_closest (Initially runs in O(n) time)
+                    if f"{person}_{key}" not in k_closest_map.keys():
+                        k_closest_map[f"{person}_{key}"] = functions.get_k_closest(self.S[person], self.C[key], self.k)
+                    k_closest = k_closest_map[f"{person}_{key}"]
+
                     # print(locations_index)
+                    # Get the optimum connection for this person and list of k_closest (Runs O(k) time)
                     min_comp_loc_index = functions.getMinimizingIndex2(person, k_closest, self.gObj, locations_index)
                     
+                    # Everything here runs in O(1) time
                     # Get the largest number of people connected in tested component
                     testedCC = self.gObj.testUnion(person, min_comp_loc_index) if (
                         self.gObj.testUnion(person, min_comp_loc_index)  > self.gObj.largestPeopleGroup
@@ -420,3 +514,72 @@ class PlottedStoreShops(DrugStoreCoffeeShops):
         stats['num_drugstores'] = len(self.C[1])
         stats['people_in_connected_components'] = self.gObj.getPeopleInComponents()
         self.data['Scenario_2_3'] = stats
+
+    def runScen2_3_1_with_plt(self, timer):
+        # Graph Object initialization
+        vertices = len(self.S) + sum([len(i) for i in self.C])
+        # The list cannot be empty
+        if(vertices < 0) :
+            print("The num of vertices must be >= 0")
+            return
+        # Initialize the graph object
+        self.gObj = GymGroceryGraph(vertices, len(self.S)) # Graph Object 
+        self.gObj.initVertices()
+        #init the first row for the list_queue, runs in O(n*k*|m|)
+        list_queue = [deque() for i in range(vertices)]
+        for person in range(len(self.S)):
+            locations_index = len(self.S)
+            for locations in range(len(self.C)):
+                k_closest = functions.get_k_closest(self.S[person], self.C[locations], self.k)
+                mapped_shoplist = [k_closest[i] + locations_index for i in range(len(k_closest))]
+                person_map = {
+                    'shoplist': mapped_shoplist,
+                    'person': person,
+                    'location_index': locations_index,
+                    'shop_type': locations
+                }
+                # Add the valid list of shops - person combos to the first stack
+                list_queue[0].append(person_map)
+                locations_index += len(self.C[locations])
+
+        for i in range(len(list_queue)):
+            goal = i + 1
+            stack = list_queue[i]
+            # Runs until the stack is empty
+            while(stack):
+                person_map = stack.pop()
+                # Checking the shop in the person map
+                person = person_map['person']
+                shoplist = person_map['shoplist']
+                goal_found = False
+                goal_index = 0
+                # Check the returned component sizes (in our case, people) to see if it matches the current goal O(k)
+                shoplist_component_sizes = []
+                for shop in shoplist:
+                    size = self.gObj.testUnionLargestComp(person, shop)
+                    # check if the resulting component size is equal to the goal
+                    if(size == goal):
+                        goal_found = True
+                        break
+                    shoplist_component_sizes.append(size)
+                    goal_index += 1
+                # Evaluate the goal and check if we found it or not.
+                if(goal_found):
+                    # Make the connection immediately with the person and shop
+                    location_index = person_map['location_index']
+                    shop_type = person_map['shop_type']
+                    self.gObj.union(person, shoplist[goal_index])
+                    self.gObj.addEdge(person, shoplist[goal_index])
+                    self.connectPLTNodes(self.S[person], self.C[shop_type][shoplist[goal_index] - location_index])
+                    plt.pause(timer)
+                else:
+                    # Goal failed, re-evaluate the component sizes and move the map to a different index
+                    min_size = min(shoplist_component_sizes) - 1 # -1 since the goal is always index + 1
+                    list_queue[min_size].append(person_map)
+        self.updateComponentGraph()
+        stats = functions.gen_stats_nx(self.gObj.graph)
+        stats['num_ppl'] = self.n
+        stats['num_coffeeshops'] = len(self.C[0])
+        stats['num_drugstores'] = len(self.C[1])
+        stats['people_in_connected_components'] = self.gObj.getPeopleInComponents()
+        self.data['Scenario_2_3_1'] = stats

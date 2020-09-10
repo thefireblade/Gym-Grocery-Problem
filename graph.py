@@ -128,3 +128,11 @@ class GymGroceryGraph(DisjointSetGraph):
             return top_parent.components
         else:
             return top_parent.components + bot_parent.components
+
+    # Returns the largest component size after a theoretical union of two nodes at index s1, and s2.
+    def testUnionLargestComp(self, s1, s2):
+        testUnion = self.testUnion(s1, s2)
+        testedCC = testUnion if (
+            testUnion  > self.largestPeopleGroup
+        ) else self.largestPeopleGroup
+        return testedCC

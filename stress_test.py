@@ -1,15 +1,15 @@
 import time 
 import traceback
 from DrugStoreCoffeeShopClass import DrugStoreCoffeeShops
-time_limit = 600
-def writeResults(testNum, timeTaken, n, k, location_set):
-    f = open("stressResults.txt", "a")
+time_limit = 10
+def writeResults(testNum, timeTaken, n, k, location_set, filename = "stressResults.txt"):
+    f = open(filename, "a")
     f.write("Test #" + str(testNum) + ": num_ppl = " + str(n) + ", k = " + str(k) + ", locations = " 
             + str(location_set) + ", timeTaken = " + str(timeTaken) + " seconds\n")
     f.close()
     
-def write(string):
-    f = open("stressResults.txt", "a")
+def write(string, filename = "stressResults.txt"):
+    f = open(filename, "a")
     f.write(string)
     f.close()
 # n = 20 #number of people
@@ -69,7 +69,7 @@ def stressTestLocNum(function, n, k):
             break
         x = x * 2
 
-def stressTestCompareScen2Scen2_2(k, n_0 = 10, ls_0 = 3, ls_1 = 3):
+def stressTestCompareScen2_2Scen2_3(k, n_0 = 10, ls_0 = 3, ls_1 = 3):
     n = n_0
     location_set = [ls_0, ls_1]
     win = 0
@@ -96,7 +96,7 @@ def stressTestCompareScen2Scen2_2(k, n_0 = 10, ls_0 = 3, ls_1 = 3):
             result_1 = obj.runScen2_3()
             second_elapse = time.perf_counter() - reset
 
-            # Write the results for scenario 2.2 (Pairing a shop to each person at a time)
+            # Write the results for scenario 2.3 (Pairing a shop to each person at a time)
             writeResults(i, second_elapse, "{:e}".format(n), k, ["{:e}".format(location_set[0]), "{:e}".format(location_set[1])])
             
         except Exception as e: 
@@ -120,9 +120,52 @@ def stressTestCompareScen2Scen2_2(k, n_0 = 10, ls_0 = 3, ls_1 = 3):
         write("Function 1 has {win} wins, {loss} losses, and {tie} ties over Function 2.\n".format(
             win=str(win), loss=str(loss), tie=str(tie)))
 
+def compareScen2_2Scen2_3(k, n_0 = 125, ls_0 = 20, ls_1 = 25, tests = 300):
+    n = n_0
+    location_set = [ls_0, ls_1]
+    win = 0
+    loss = 0
+    tie = 0
+    for i in range(tests):
+        print("Commencing test #" + str(i))
+        obj = DrugStoreCoffeeShops(n, k, location_set)
+        obj.setup()
+        
+        result_0 = -1 #The maximum returned component of function1
+        result_1 = -1 #The maximum returned compononent of function2
+        try:
+            result_0 = obj.runScen2_2()
+
+            # Write the results for scenario 2 (Pairing both shops to a person at a time)
+            # writeResults(i, first_elapse, "{:e}".format(n), k, ["{:e}".format(location_set[0]), "{:e}".format(location_set[1])],
+            # "unit_test_2_3.txt")
+            
+            obj.resetGraph() #Reset the graph so we can compare to the second test
+
+            result_1 = obj.runScen2_3()
+
+            # Write the results for scenario 2.3 (Pairing a shop to each person at a time)
+            # writeResults(i, second_elapse, "{:e}".format(n), k, ["{:e}".format(location_set[0]), "{:e}".format(location_set[1])], 
+            # "unit_test_2_3.txt")
+            
+        except Exception as e: 
+            traceback.print_exc()
+            print(e)
+            break
+        if(result_0 == result_1):
+            tie += 1
+        else:
+            if(result_0 > result_1):
+                win += 1
+            else:
+                loss += 1
+        del obj # Delete the DrugStoreCoffeeShop Object after using it
+    write("Function 1 has {win} wins, {loss} losses, and {tie} ties over Function 2.\n".format(
+        win=str(win), loss=str(loss), tie=str(tie)), "unit_test_2_3.txt")
+
 if __name__ == "__main__" :
     # #k doesnn't matter with scen2
 	# stressTestN(stressTestScen2, 5, [5, 5])
 	# stressTestLocNum(stressTestScen2, 100, 5)
 	# stressTestLocSize(stressTestScen2, 1000, 5)
-    stressTestCompareScen2Scen2_2(3)
+    compareScen2_2Scen2_3(3, tests = 3000)

@@ -9,9 +9,9 @@ from DrugStoreCoffeeShopClass import PlottedStoreShops
 import networkx as nx
 
 ############################################### VARIABLES ###########################################
-n = 4 #number of people
-k = 2 # k random closest (For scenario 1)
-location_set = [2, 2] #Each item in this set represents the # of randomly generated locations for Coffee Shops, Drugstores, etc
+n = 25 #number of people
+k = 12 # k random closest (For scenario 1)
+location_set = [12, 12] #Each item in this set represents the # of randomly generated locations for Coffee Shops, Drugstores, etc
 
 
 ############################################# COMPONENTS ################################################
@@ -158,7 +158,7 @@ if __name__ == "__main__" :
     # getStats()
     b = PlottedStoreShops(n, k, location_set)
     b.setup()
-    b.animate(b.runScen2_3_with_plt, 2)
+    b.animateConcurrent(b.runScen2_3_with_plt, b.runScen2_3_1_with_plt, 0.2)
     # b.resetGraph()
     # b.animate(b.runScen2_2_with_plt, 0.1)
     # b.runScen2()
