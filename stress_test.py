@@ -1,7 +1,7 @@
 import time 
 import traceback
 from DrugStoreCoffeeShopClass import DrugStoreCoffeeShops
-time_limit = 10
+time_limit = 200
 def writeResults(testNum, timeTaken, n, k, location_set, filename = "stressResults.txt"):
     f = open(filename, "a")
     f.write("Test #" + str(testNum) + ": num_ppl = " + str(n) + ", k = " + str(k) + ", locations = " 
@@ -84,7 +84,7 @@ def stressTestCompareScen2_2Scen2_3(k, n_0 = 10, ls_0 = 3, ls_1 = 3):
         result_1 = -1 #The maximum returned compononent of function2
         start = time.perf_counter()
         try:
-            result_0 = obj.runScen2()
+            result_0 = obj.runScen2_3()
             first_elapse = time.perf_counter() - start
 
             # Write the results for scenario 2 (Pairing both shops to a person at a time)
@@ -93,7 +93,7 @@ def stressTestCompareScen2_2Scen2_3(k, n_0 = 10, ls_0 = 3, ls_1 = 3):
             obj.resetGraph() #Reset the graph so we can compare to the second test
 
             reset = time.perf_counter()
-            result_1 = obj.runScen2_3()
+            result_1 = obj.runScen2_3_1()
             second_elapse = time.perf_counter() - reset
 
             # Write the results for scenario 2.3 (Pairing a shop to each person at a time)
@@ -134,7 +134,7 @@ def compareScen2_2Scen2_3(k, n_0 = 125, ls_0 = 20, ls_1 = 25, tests = 300):
         result_0 = -1 #The maximum returned component of function1
         result_1 = -1 #The maximum returned compononent of function2
         try:
-            result_0 = obj.runScen2_2()
+            result_0 = obj.runScen2_3()
 
             # Write the results for scenario 2 (Pairing both shops to a person at a time)
             # writeResults(i, first_elapse, "{:e}".format(n), k, ["{:e}".format(location_set[0]), "{:e}".format(location_set[1])],
@@ -142,7 +142,7 @@ def compareScen2_2Scen2_3(k, n_0 = 125, ls_0 = 20, ls_1 = 25, tests = 300):
             
             obj.resetGraph() #Reset the graph so we can compare to the second test
 
-            result_1 = obj.runScen2_3()
+            result_1 = obj.runScen2_3_1()
 
             # Write the results for scenario 2.3 (Pairing a shop to each person at a time)
             # writeResults(i, second_elapse, "{:e}".format(n), k, ["{:e}".format(location_set[0]), "{:e}".format(location_set[1])], 
@@ -169,3 +169,4 @@ if __name__ == "__main__" :
 	# stressTestLocNum(stressTestScen2, 100, 5)
 	# stressTestLocSize(stressTestScen2, 1000, 5)
     compareScen2_2Scen2_3(3, tests = 3000)
+    # stressTestCompareScen2_2Scen2_3(3)

@@ -164,6 +164,71 @@ class DrugStoreCoffeeShops():
         return stats['max_connected_component_size']
 
 
+    def runScen2_3_1(self):
+        # Graph Object initialization
+        vertices = len(self.S) + sum([len(i) for i in self.C])
+        # The list cannot be empty
+        if(vertices < 0) :
+            print("The num of vertices must be >= 0")
+            return
+        # Initialize the graph object
+        self.gObj = GymGroceryGraph(vertices, len(self.S)) # Graph Object 
+        self.gObj.initVertices()
+        #init the first row for the list_queue, runs in O(n*k*|m|)
+        list_queue = [deque() for i in range(vertices)]
+        for person in range(len(self.S)):
+            locations_index = len(self.S)
+            for locations in range(len(self.C)):
+                k_closest = functions.get_k_closest(self.S[person], self.C[locations], self.k)
+                mapped_shoplist = [k_closest[i] + locations_index for i in range(len(k_closest))]
+                person_map = {
+                    'shoplist': mapped_shoplist,
+                    'person': person
+                }
+                # Add the valid list of shops - person combos to the first stack
+                list_queue[0].append(person_map)
+                locations_index += len(self.C[locations])
+
+        for i in range(len(list_queue)):
+            goal = i + 1
+            stack = list_queue[i]
+            # Runs until the stack is empty
+            while(stack):
+                person_map = stack.pop()
+                # Checking the shop in the person map
+                person = person_map['person']
+                shoplist = person_map['shoplist']
+                goal_found = False
+                goal_index = 0
+                # Check the returned component sizes (in our case, people) to see if it matches the current goal O(k)
+                shoplist_component_sizes = []
+                for shop in shoplist:
+                    size = self.gObj.testUnionLargestComp(person, shop)
+                    # check if the resulting component size is equal to the goal
+                    if(size == goal):
+                        goal_found = True
+                        break
+                    shoplist_component_sizes.append(size)
+                    goal_index += 1
+                # Evaluate the goal and check if we found it or not.
+                if(goal_found):
+                    # Make the connection immediately with the person and shop
+                    self.gObj.union(person, shoplist[goal_index])
+                    self.gObj.addEdge(person, shoplist[goal_index])
+                else:
+                    # Goal failed, re-evaluate the component sizes and move the map to a different index
+                    min_size = min(shoplist_component_sizes) - 1 # -1 since the goal is always index + 1
+                    list_queue[min_size].append(person_map)
+        stats = functions.gen_stats_nx(self.gObj.graph)
+        stats['num_ppl'] = self.n
+        stats['num_coffeeshops'] = len(self.C[0])
+        stats['num_drugstores'] = len(self.C[1])
+        stats['people_in_connected_components'] = self.gObj.getPeopleInComponents()
+        stats['max_connected_component_size'] = self.gObj.largestPeopleGroup
+        self.data['Scenario_2_3_1'] = stats
+        return stats['max_connected_component_size']
+
+
     def getStats(self):
         print(self.data)
         functions.export(self.data)

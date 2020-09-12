@@ -1,2 +1,5 @@
 Function 1 has 718 wins, 2242 losses, and 40 ties over Function 2.
 Function 1 has 692 wins, 2267 losses, and 41 ties over Function 2.
+#Non-Queue Function 1, Queue Function 2
+Function 1 has 953 wins, 1884 losses, and 163 ties over Function 2.
+Function 1 has 950 wins, 1901 losses, and 149 ties over Function 2.
