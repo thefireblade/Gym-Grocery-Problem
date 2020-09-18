@@ -3,3 +3,23 @@ Function 1 has 692 wins, 2267 losses, and 41 ties over Function 2.
 #Non-Queue Function 1, Queue Function 2
 Function 1 has 953 wins, 1884 losses, and 163 ties over Function 2.
 Function 1 has 950 wins, 1901 losses, and 149 ties over Function 2.
+
+#Non-Queue Function 1, Queue Function 2: 20 tests
+Function 1 has 947 wins, 1900 losses, and 153 ties over Function 2.
+Function 1 has 986 wins, 1843 losses, and 171 ties over Function 2.
+Function 1 has 994 wins, 1832 losses, and 174 ties over Function 2.
+Function 1 has 969 wins, 1887 losses, and 144 ties over Function 2.
+Function 1 has 991 wins, 1837 losses, and 172 ties over Function 2.
+Function 1 has 918 wins, 1918 losses, and 164 ties over Function 2.
+Function 1 has 919 wins, 1934 losses, and 147 ties over Function 2.
+Function 1 has 963 wins, 1873 losses, and 164 ties over Function 2.
+Function 1 has 987 wins, 1860 losses, and 153 ties over Function 2.
+Function 1 has 954 wins, 1891 losses, and 155 ties over Function 2.
+Function 1 has 965 wins, 1873 losses, and 162 ties over Function 2.
+Function 1 has 944 wins, 1877 losses, and 179 ties over Function 2.
+Function 1 has 947 wins, 1892 losses, and 161 ties over Function 2.
+Function 1 has 961 wins, 1899 losses, and 140 ties over Function 2.
+Function 1 has 931 wins, 1908 losses, and 161 ties over Function 2.
+Function 1 has 963 wins, 1863 losses, and 174 ties over Function 2.
+Function 1 has 948 wins, 1896 losses, and 156 ties over Function 2.
+Function 1 has 966 wins, 1868 losses, and 166 ties over Function 2.

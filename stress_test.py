@@ -168,5 +168,6 @@ if __name__ == "__main__" :
 	# stressTestN(stressTestScen2, 5, [5, 5])
 	# stressTestLocNum(stressTestScen2, 100, 5)
 	# stressTestLocSize(stressTestScen2, 1000, 5)
-    compareScen2_2Scen2_3(3, tests = 3000)
+    for i in range(20):
+        compareScen2_2Scen2_3(3, tests = 3000)
     # stressTestCompareScen2_2Scen2_3(3)
