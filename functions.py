@@ -6,17 +6,22 @@ import json
 import numpy as np
 from scipy.sparse.csgraph import connected_components
 import networkx as nx
+import geocoder
 
 ###### GLOBALS ############
 ties = 0
+my_geo = geocoder.ip('me')
 
 ###### CONSTANTS ##########
-# Long Island Longitude
-x_lower = 40.589971
-x_upper = 41.139365
-# Long Island Lattitude
-y_lower = -73.768044
-y_upper = -72.225494
+geolocation_range = 0.25
+
+###### Geo Locations ########
+#Lattitude
+x_lower = my_geo.latlng[0] - geolocation_range
+x_upper = my_geo.latlng[0] + geolocation_range
+#Longitude
+y_lower = my_geo.latlng[1] - geolocation_range
+y_upper = my_geo.latlng[1] + geolocation_range
 
 dof = 6  # Degrees of freedom
 

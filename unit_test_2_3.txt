@@ -23,3 +23,17 @@ Function 1 has 931 wins, 1908 losses, and 161 ties over Function 2.
 Function 1 has 963 wins, 1863 losses, and 174 ties over Function 2.
 Function 1 has 948 wins, 1896 losses, and 156 ties over Function 2.
 Function 1 has 966 wins, 1868 losses, and 166 ties over Function 2.
+
+#Queue Random Function 1, Queue Function 2: 5 tests, 125 people, 20 gyms, 25 stores
+Function 1 has 0 wins, 0 losses, and 1000 ties over Function 2.
+Function 1 has 0 wins, 0 losses, and 1000 ties over Function 2.
+Function 1 has 0 wins, 0 losses, and 1000 ties over Function 2.
+Function 1 has 0 wins, 0 losses, and 1000 ties over Function 2.
+Function 1 has 0 wins, 0 losses, and 1000 ties over Function 2.
+
+
+#Queue Random Function 1, Queue Function 2: 4 tests, 200 people, 30 gyms, 35 stores
+Function 1 has 0 wins, 0 losses, and 500 ties over Function 2.
+Function 1 has 0 wins, 0 losses, and 500 ties over Function 2.
+Function 1 has 0 wins, 0 losses, and 500 ties over Function 2.
+Function 1 has 0 wins, 0 losses, and 500 ties over Function 2.

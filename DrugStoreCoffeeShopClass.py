@@ -6,6 +6,7 @@ import networkx as nx
 import time
 import matplotlib.pyplot as plt
 from collections import deque
+import numpy as np
 
 class DrugStoreCoffeeShops():
     # Don't set 'S', 'C', 'G', 'data'
@@ -17,19 +18,90 @@ class DrugStoreCoffeeShops():
         self.C = []  # The set of distinct locations. Set of sets of distinct locations that people go to (C = [grocery, gym, coffee,etc.]) **Contains A and B
         self.G = nx.Graph() # The graph that holds the connections
         self.data = {}
-        self.gObj = DisjointSetGraph(0)
+        self.gObj = None
+        self.person_maps = None
+        self.vertices = None
 
+    # When importing the based on a networkx model for the line graph (ONLY WORKS WITH SHOP AND GYM TYPES)
+    # 'type' of a node can be 'person', 'gym', or 'store'
+    # *In addition to this, each person's connection represents what he/she can go to. 
+    # *If he/she is an illegal node, find those connections in the original graph
+    # Adapted for use in Algorithm 2_3_1
+    def import_lgraph(self, currLGraphPath, origLGraphPath):
+        currLGraph = nx.read_gml(currLGraphPath) 
+        origLGraph = nx.read_gml(origLGraphPath) 
+        node_count = 0
+        people_count = 0
+
+        # Get a count of the number of people O(n) and vertices
+        for index in origLGraph.nodes:
+            if origLGraph.nodes[index]['type'] == "people":
+                people_count += 1
+            node_count += 1
+            
+        self.n = people_count
+        self.vertices = node_count
+        person_maps = []
+        # Initialize the graph object
+        self.gObj = GymGroceryGraph(node_count, people_count)
+        self.gObj.initVertices()
+        for index in currLGraph.nodes:
+            node_type = currLGraph.nodes[index]['type']
+            # Case for person
+            if node_type == "people":
+                gyms = []
+                stores = []
+                # Separate the 2 types from neighbors
+                for neighbor_index in currLGraph.neighbors(index):
+                    if currLGraph.nodes[neighbor_index]['type'] == "gym":
+                        gyms.append(int(neighbor_index) - 1)
+                    else:
+                        stores.append(int(neighbor_index) - 1)
+
+                # Parse Gyms
+                if len(gyms) == 0: # Illegal case / get all gyms that are in the original graph
+                    for neighbor_index in origLGraph.neighbors(index):
+                        if origLGraph.nodes[neighbor_index]['type'] == "gym":
+                            gyms.append(int(neighbor_index) - 1)
+                if len(gyms) == 1:
+                    self.gObj.union(gyms[0], int(index) - 1)
+                    self.gObj.addEdge(gyms[0], int(index) - 1)
+                else:
+                    person_maps.append({
+                        'shoplist': gyms,
+                        'person': int(index) - 1
+                    })
+
+                # Parse Shops
+                if len(stores) == 0: # Illegal case / get all gyms that are in the original graph
+                    for neighbor_index in origLGraph.neighbors(index):
+                        if origLGraph.nodes[neighbor_index]['type'] == "store":
+                            stores.append(int(neighbor_index) - 1)
+                if len(stores) == 1:
+                    self.gObj.union(stores[0], int(index) - 1)
+                    self.gObj.addEdge(stores[0], int(index) - 1)
+                else:
+                    person_maps.append({
+                        'shoplist': stores,
+                        'person': int(index) - 1
+                    })
+        self.person_maps = person_maps
+
+    # Required to run if the graph is not imported
     def setup(self):
         functions.initS(self.S, self.n)
         functions.genC(*self.location_set)
         self.C = functions.get_data()['C']
         # functions.initG(self.S, self.C, self.G)
-        self.G = nx.Graph()
+        self.G = None
+    def importLocations(self):
+        functions.initS(self.S, self.n)
 
     def resetGraph(self):
-        self.G = nx.Graph()
+        self.G = None
 
     def runScen1(self):
+        self.G = nx.Graph()
         for p in range(len(self.S)):
             i = 0
             for l in range(len(self.C)):
@@ -166,28 +238,34 @@ class DrugStoreCoffeeShops():
 
     def runScen2_3_1(self):
         # Graph Object initialization
-        vertices = len(self.S) + sum([len(i) for i in self.C])
+        vertices = self.n + sum([len(i) for i in self.C])
+        if self.vertices:
+            vertices = self.vertices
         # The list cannot be empty
         if(vertices < 0) :
             print("The num of vertices must be >= 0")
             return
         # Initialize the graph object
-        self.gObj = GymGroceryGraph(vertices, len(self.S)) # Graph Object 
-        self.gObj.initVertices()
-        #init the first row for the list_queue, runs in O(n*k*|m|)
+        if(not self.gObj):
+            self.gObj = GymGroceryGraph(vertices, len(self.S)) # Graph Object 
+            self.gObj.initVertices()
+        #init the first row for the list_queue, runs in O(n*k*|m|) or O(V) if imported L graph
         list_queue = [deque() for i in range(vertices)]
-        for person in range(len(self.S)):
-            locations_index = len(self.S)
-            for locations in range(len(self.C)):
-                k_closest = functions.get_k_closest(self.S[person], self.C[locations], self.k)
-                mapped_shoplist = [k_closest[i] + locations_index for i in range(len(k_closest))]
-                person_map = {
-                    'shoplist': mapped_shoplist,
-                    'person': person
-                }
-                # Add the valid list of shops - person combos to the first stack
-                list_queue[0].append(person_map)
-                locations_index += len(self.C[locations])
+        if self.person_maps:
+            list_queue[0].extendleft(self.person_maps)
+        else:
+            for person in range(len(self.S)):
+                locations_index = len(self.S)
+                for locations in range(len(self.C)):
+                    k_closest = functions.get_k_closest(self.S[person], self.C[locations], self.k)
+                    mapped_shoplist = [k_closest[i] + locations_index for i in range(len(k_closest))]
+                    person_map = {
+                        'shoplist': mapped_shoplist,
+                        'person': person
+                    }
+                    # Add the valid list of shops - person combos to the first stack
+                    list_queue[0].append(person_map)
+                    locations_index += len(self.C[locations])
 
         for i in range(len(list_queue)):
             goal = i + 1
@@ -221,13 +299,108 @@ class DrugStoreCoffeeShops():
                     list_queue[min_size].append(person_map)
         stats = functions.gen_stats_nx(self.gObj.graph)
         stats['num_ppl'] = self.n
-        stats['num_coffeeshops'] = len(self.C[0])
-        stats['num_drugstores'] = len(self.C[1])
+        if len(self.C) >= 2:
+            stats['num_coffeeshops'] = len(self.C[0])
+            stats['num_drugstores'] = len(self.C[1])
         stats['people_in_connected_components'] = self.gObj.getPeopleInComponents()
         stats['max_connected_component_size'] = self.gObj.largestPeopleGroup
         self.data['Scenario_2_3_1'] = stats
         return stats['max_connected_component_size']
 
+    def runScen2_3_1_rand(self):
+        # Graph Object initialization
+        vertices = self.n + sum([len(i) for i in self.C])
+        if self.vertices:
+            vertices = self.vertices
+        # The list cannot be empty
+        if(vertices < 0) :
+            print("The num of vertices must be >= 0")
+            return
+        # Initialize the graph object
+        if(not self.gObj):
+            self.gObj = GymGroceryGraph(vertices, len(self.S)) # Graph Object 
+            self.gObj.initVertices()
+        #init the first row for the list_queue, runs in O(n*k*|m|) or O(V) if imported L graph
+        list_queue = [deque() for i in range(vertices)]
+        if self.person_maps:
+            list_queue[0].extendleft(self.person_maps)
+        else:
+            for person in range(len(self.S)):
+                locations_index = len(self.S)
+                for locations in range(len(self.C)):
+                    k_closest = functions.get_k_closest(self.S[person], self.C[locations], self.k)
+                    mapped_shoplist = [k_closest[i] + locations_index for i in range(len(k_closest))]
+                    person_map = {
+                        'shoplist': mapped_shoplist,
+                        'person': person
+                    }
+                    # Add the valid list of shops - person combos to the first stack
+                    list_queue[0].append(person_map)
+                    locations_index += len(self.C[locations])
+
+        for i in range(len(list_queue)):
+            goal = i + 1
+            stack = list_queue[i]
+            ties_list = []
+            # Runs until the stack is empty
+            while(stack):
+                person_map = stack.pop()
+                # Checking the shop in the person map
+                person = person_map['person']
+                shoplist = person_map['shoplist']
+                goal_found = False
+                goal_index = 0
+                # Check the returned component sizes (in our case, people) to see if it matches the current goal O(k)
+                shoplist_component_sizes = []
+                for shop in shoplist:
+                    size = self.gObj.testUnionLargestComp(person, shop)
+                    # check if the resulting component size is equal to the goal
+                    if(size == goal):
+                        goal_found = True
+                        ties_list.append(person_map)
+                        break
+                    shoplist_component_sizes.append(size)
+                    goal_index += 1
+                # Evaluate the goal and check if we found it or not.
+                if(not goal_found):
+                    # Goal failed, re-evaluate the component sizes and move the map to a different index
+                    min_size = min(shoplist_component_sizes) - 1 # -1 since the goal is always index + 1
+                    list_queue[min_size].append(person_map)
+        ########################### RANDOM PART OF THIS ALGORITHM ################################            
+                #RANDOMLY CHOOSE A TIE HERE AND RESHUFFLE THE REST BACK INTO THE STACK
+                if(not stack and ties_list):
+                    print("Number of ties {num}".format(num= len(ties_list)))
+                    # Get random index for ties list
+                    random_selection = np.random.randint(len(ties_list))
+                    # Extract the person map from ties_list
+                    person_map = ties_list[random_selection]
+                    ties_list.remove(person_map)
+                    shops_ties = []
+                    # Search through for the best goal for this person
+                    person = person_map['person']
+                    shoplist = person_map['shoplist']
+                    goal_index = 0
+                    for shop in shoplist:
+                        size = self.gObj.testUnionLargestComp(person, shop)
+                        # check if the resulting component size is equal to the goal
+                        if(size == goal):
+                            shops_ties.append(goal_index)
+                        goal_index += 1
+                    # Make connection and put back the remaining on the stack to reiterate
+                    random_selection = np.random.randint(len(shops_ties))
+                    self.gObj.union(person, shoplist[shops_ties[random_selection]])
+                    self.gObj.addEdge(person, shoplist[shops_ties[random_selection]])
+                    stack.extendleft(ties_list)
+                    ties_list = []
+        stats = functions.gen_stats_nx(self.gObj.graph)
+        stats['num_ppl'] = self.n
+        if len(self.C) >= 2:
+            stats['num_coffeeshops'] = len(self.C[0])
+            stats['num_drugstores'] = len(self.C[1])
+        stats['people_in_connected_components'] = self.gObj.getPeopleInComponents()
+        stats['max_connected_component_size'] = self.gObj.largestPeopleGroup
+        self.data['Scenario_2_3_1'] = stats
+        return stats['max_connected_component_size']
 
     def getStats(self):
         print(self.data)
