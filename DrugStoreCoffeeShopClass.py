@@ -30,7 +30,9 @@ class DrugStoreCoffeeShops():
         self.data = {}
         self.gObj = None
         self.person_maps = None
+        self.imported = False
         self.vertices = None
+        self.k_closest = [] #List of maps
 
     # When importing the based on a networkx model for the line graph (ONLY WORKS WITH SHOP AND GYM TYPES)
     # 'type' of a node can be 'person', 'gym', or 'store'
@@ -50,11 +52,15 @@ class DrugStoreCoffeeShops():
             node_count += 1
             
         self.n = people_count
+        self.S = [0 for i in range(people_count)]
         self.vertices = node_count
         person_maps = []
         # Initialize the graph object
         self.gObj = GymGroceryGraph(node_count, people_count)
         self.gObj.initVertices()
+        self.k_closest = []
+        self.k_closest.append({})
+        self.k_closest.append({})
         for index in currLGraph.nodes:
             node_type = currLGraph.nodes[index]['type']
             # Case for person
@@ -67,7 +73,6 @@ class DrugStoreCoffeeShops():
                         gyms.append(int(neighbor_index) - 1)
                     else:
                         stores.append(int(neighbor_index) - 1)
-
                 # Parse Gyms
                 if len(gyms) == 0: # Illegal case / get all gyms that are in the original graph
                     for neighbor_index in origLGraph.neighbors(index):
@@ -81,7 +86,7 @@ class DrugStoreCoffeeShops():
                         'shoplist': gyms,
                         'person': int(index) - 1
                     })
-
+                    self.k_closest[0][int(index) - 1] = gyms
                 # Parse Shops
                 if len(stores) == 0: # Illegal case / get all gyms that are in the original graph
                     for neighbor_index in origLGraph.neighbors(index):
@@ -94,8 +99,10 @@ class DrugStoreCoffeeShops():
                     person_maps.append({
                         'shoplist': stores,
                         'person': int(index) - 1
-                    })
+                    })            
+                    self.k_closest[1][int(index) - 1] = stores
         self.person_maps = person_maps
+        self.imported = True
     
     # Export a version of a graph in gml format with labels: "type": "people", and label == id + 1
     def export(self, filename = default_data_name):
@@ -143,11 +150,13 @@ class DrugStoreCoffeeShops():
         self.C = functions.get_data()['C']
         # functions.initG(self.S, self.C, self.G)
         self.G = None
+        self.imported = None
     def importLocations(self):
         functions.initS(self.S, self.n)
 
     def resetGraph(self):
         self.G = None
+        self.imported = False
 
     def runScen1(self):
         self.G = nx.Graph()
@@ -168,13 +177,45 @@ class DrugStoreCoffeeShops():
 
     def runScen2(self):
         vertices = len(self.S) + sum([len(i) for i in self.C])
-        self.gObj = GymGroceryGraph(vertices, len(self.S)) # Graph Object
-        self.gObj.initVertices()
+        if not self.imported:
+            self.gObj = GymGroceryGraph(vertices, len(self.S)) # Graph Object
+            self.gObj.initVertices()
         for i in range(len(self.S)):
             locations_index = len(self.S)
             for j in range(len(self.C)):        
-                k_closest = functions.get_k_closest(self.S[i], self.C[j], self.k)
+                k_closest = []
+                if(self.imported):
+                    k_closest = self.k_closest[j][i]
+                    locations_index = 0
+                else:
+                    k_closest = functions.get_k_closest(self.S[i], self.C[j], self.k)
                 min_comp_loc_index = functions.getMinimizingIndex2(i, k_closest, self.gObj, locations_index)
+                self.gObj.union(i, min_comp_loc_index)
+                self.gObj.addEdge(i, min_comp_loc_index)
+                locations_index += len(self.C[j])
+        stats = functions.gen_stats_nx(self.gObj.graph)
+        stats['num_ppl'] = self.n
+        stats['num_coffeeshops'] = len(self.C[0])
+        stats['num_drugstores'] = len(self.C[1])
+        stats['max_connected_component_size'] = self.gObj.largestPeopleGroup
+        self.data['Scenario_2'] = stats
+        return stats['max_connected_component_size']
+
+    def runScen2Random(self):
+        vertices = len(self.S) + sum([len(i) for i in self.C])
+        if not self.imported:
+            self.gObj = GymGroceryGraph(vertices, len(self.S)) # Graph Object
+            self.gObj.initVertices()
+        for i in range(len(self.S)):
+            locations_index = len(self.S)
+            for j in range(len(self.C)):        
+                k_closest = []
+                if(self.imported):
+                    k_closest = self.k_closest[j][i]
+                    locations_index = 0
+                else:
+                    k_closest = functions.get_k_closest(self.S[i], self.C[j], self.k)
+                min_comp_loc_index = functions.getMinimizingIndex2Random(i, k_closest, self.gObj, locations_index)
                 self.gObj.union(i, min_comp_loc_index)
                 self.gObj.addEdge(i, min_comp_loc_index)
                 locations_index += len(self.C[j])
@@ -188,13 +229,44 @@ class DrugStoreCoffeeShops():
 
     def runScen2_2(self):
         vertices = len(self.S) + sum([len(i) for i in self.C])
-        self.gObj = GymGroceryGraph(vertices, len(self.S)) # Graph Object
-        self.gObj.initVertices()
+        if not self.imported:
+            self.gObj = GymGroceryGraph(vertices, len(self.S)) # Graph Object
+            self.gObj.initVertices()
         for j in range(len(self.C)):     
             locations_index = len(self.S) + (sum([len(self.C[k]) for k in range(j)]))   
             for i in range(len(self.S)): 
-                k_closest = functions.get_k_closest(self.S[i], self.C[j], self.k)
+                k_closest = []
+                if(self.imported):
+                    k_closest = self.k_closest[j][i]
+                    locations_index = 0
+                else:
+                    k_closest = functions.get_k_closest(self.S[i], self.C[j], self.k)
                 min_comp_loc_index = functions.getMinimizingIndex2(i, k_closest, self.gObj, locations_index)
+                self.gObj.union(i, min_comp_loc_index)
+                self.gObj.addEdge(i, min_comp_loc_index)
+        stats = functions.gen_stats_nx(self.gObj.graph)
+        stats['num_ppl'] = self.n
+        stats['num_coffeeshops'] = len(self.C[0])
+        stats['num_drugstores'] = len(self.C[1])
+        stats['max_connected_component_size'] = self.gObj.largestPeopleGroup
+        self.data['Scenario_2_2'] = stats
+        return stats['max_connected_component_size']
+
+    def runScen2_2Random(self):
+        vertices = len(self.S) + sum([len(i) for i in self.C])
+        if not self.imported:
+            self.gObj = GymGroceryGraph(vertices, len(self.S)) # Graph Object
+            self.gObj.initVertices()
+        for j in range(len(self.C)):     
+            locations_index = len(self.S) + (sum([len(self.C[k]) for k in range(j)]))   
+            for i in range(len(self.S)): 
+                k_closest = []
+                if(self.imported):
+                    k_closest = self.k_closest[j][i]
+                    locations_index = 0
+                else:
+                    k_closest = functions.get_k_closest(self.S[i], self.C[j], self.k)
+                min_comp_loc_index = functions.getMinimizingIndex2Random(i, k_closest, self.gObj, locations_index)
                 self.gObj.union(i, min_comp_loc_index)
                 self.gObj.addEdge(i, min_comp_loc_index)
         stats = functions.gen_stats_nx(self.gObj.graph)
@@ -210,8 +282,9 @@ class DrugStoreCoffeeShops():
     def runScen2_3(self):
         # Graph Object initialization
         vertices = len(self.S) + sum([len(i) for i in self.C])
-        self.gObj = GymGroceryGraph(vertices, len(self.S)) # Graph Object 
-        self.gObj.initVertices()
+        if not self.imported:
+            self.gObj = GymGroceryGraph(vertices, len(self.S)) # Graph Object
+            self.gObj.initVertices()
 
         tracker_map = {}
         k_closest_map = {}
@@ -239,12 +312,17 @@ class DrugStoreCoffeeShops():
             for key in tracker_keys:
                 for person in tracker_map[key]:
                     # Check every location for that person
-                    locations_index = len(self.S) + key_index_map[key]  
+                    locations_index = 0
+                    if(not self.imported):
+                        locations_index = len(self.S) + key_index_map[key]  
                     
                     k_closest = []
                     # Tabulate the k_closest (Initially runs in O(n) time)
                     if f"{person}_{key}" not in k_closest_map.keys():
-                        k_closest_map[f"{person}_{key}"] = functions.get_k_closest(self.S[person], self.C[key], self.k)
+                        if(self.imported):
+                            k_closest_map[f"{person}_{key}"] = self.k_closest[key][person]
+                        else:
+                            k_closest_map[f"{person}_{key}"] = functions.get_k_closest(self.S[person], self.C[key], self.k)
                     k_closest = k_closest_map[f"{person}_{key}"]
 
                     # print(locations_index)
@@ -284,6 +362,90 @@ class DrugStoreCoffeeShops():
         self.data['Scenario_2_3'] = stats
         return stats['max_connected_component_size']
 
+    # Contraints : There must be at least one shop of any type
+    # Perform a search on people and compare the 
+    def runScen2_3Random(self):
+        # Graph Object initialization
+        vertices = len(self.S) + sum([len(i) for i in self.C])
+        if not self.imported:
+            self.gObj = GymGroceryGraph(vertices, len(self.S)) # Graph Object
+            self.gObj.initVertices()
+
+        tracker_map = {}
+        k_closest_map = {}
+        tracker_keys = []
+        # 2-D List construction
+        for i in range(len(self.C)):
+            shop_list = []
+            for person in range(len(self.S)):
+                shop_list.append(person)
+            tracker_map[i] = shop_list
+            tracker_keys.append(i)
+
+        # Table every starting index of every key
+        key_index_map = {}
+        for key in tracker_keys:
+            key_index_map[key] = sum([len(self.C[i]) for i in range(key)])
+
+        while(tracker_map): #Check if the map is not empty
+            best_pick_person = -1 #Get the first index existing in the list
+            best_pick_shop = -1 #Assume there is atleast one shop to connect the person to
+            best_key = tracker_keys[0]
+            # Track the largest number of people in a connected component
+            largestCC = len(self.S) #Worst case scenario
+
+            for key in tracker_keys:
+                for person in tracker_map[key]:
+                    # Check every location for that person
+                    locations_index = 0
+                    if(not self.imported):
+                        locations_index = len(self.S) + key_index_map[key]  
+                    
+                    k_closest = []
+                    # Tabulate the k_closest (Initially runs in O(n) time)
+                    if f"{person}_{key}" not in k_closest_map.keys():
+                        if(self.imported):
+                            k_closest_map[f"{person}_{key}"] = self.k_closest[key][person]
+                        else:
+                            k_closest_map[f"{person}_{key}"] = functions.get_k_closest(self.S[person], self.C[key], self.k)
+                    k_closest = k_closest_map[f"{person}_{key}"]
+
+                    # print(locations_index)
+                    # Get the optimum connection for this person and list of k_closest (Runs O(k) time)
+                    min_comp_loc_index = functions.getMinimizingIndex2Random(person, k_closest, self.gObj, locations_index)
+                    
+                    # Everything here runs in O(1) time
+                    # Get the largest number of people connected in tested component
+                    testedCC = self.gObj.testUnion(person, min_comp_loc_index) if (
+                        self.gObj.testUnion(person, min_comp_loc_index)  > self.gObj.largestPeopleGroup
+                    ) else self.gObj.largestPeopleGroup
+                    # Debug prints
+                    # print("Person : " + str(person) + " and location " + str(key))
+                    # print("testCC = " + str(testedCC))
+                    # print("largestCC = " + str(largestCC))
+                    if(largestCC == len(self.S) or testedCC < largestCC or best_pick_person == -1):
+                        # print("The best person is now " + str(person) + " with location " + str(min_comp_loc_index))
+                        largestCC = testedCC
+                        best_pick_person = person
+                        best_pick_shop = min_comp_loc_index 
+                        best_key = key
+
+            self.gObj.union(best_pick_person, best_pick_shop)
+            self.gObj.addEdge(best_pick_person, best_pick_shop)
+            tracker_map[best_key].remove(best_pick_person)
+            # print("The largestCC is now : " + str(self.gObj.largestPeopleGroup))
+            if(len(tracker_map[best_key]) == 0):
+                # print("The key " + str(best_key) + " is now empty!")
+                del tracker_map[best_key] # Delete the shoplist within the key index
+                tracker_keys.remove(best_key)
+        stats = functions.gen_stats_nx(self.gObj.graph)
+        stats['num_ppl'] = self.n
+        stats['num_coffeeshops'] = len(self.C[0])
+        stats['num_drugstores'] = len(self.C[1])
+        stats['people_in_connected_components'] = self.gObj.getPeopleInComponents()
+        stats['max_connected_component_size'] = self.gObj.largestPeopleGroup
+        self.data['Scenario_2_3'] = stats
+        return stats['max_connected_component_size']
 
     def runScen2_3_1(self):
         # Graph Object initialization

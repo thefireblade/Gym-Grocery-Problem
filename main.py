@@ -14,7 +14,7 @@ test_graph = "./data/exports/text.gml"
 imported_graph = "./data/expandingCircle/random2_25_05_04_05_bgm.gml"
 original_graph = "./data/expandingCircle/random2_25_05_04_05.gml"
 export_filepath = './data/exports/random_400people_20gym_20store_5k_2.gml'
-n = 400 # number of people
+n = 110 # number of people
 k = 5 # k random closest (For scenario 1)
 location_set = [20, 20] #Each item in this set represents the # of randomly generated locations for Coffee Shops, Drugstores, etc
 
@@ -185,12 +185,13 @@ if __name__ == "__main__" :
     #Test for Imports
     b = PlottedStoreShops(n, k, location_set)
     b.setup()
-    b.export(export_filepath)
-    # b.import_lgraph(test_graph, test_graph)
+    # b.export(export_filepath)
+    b.import_lgraph(test_graph, test_graph)
+    b.runScen2_3()
     # nx.draw(b.gObj.graph, node_color = color_map)
     # plt.show()
     # print('Max Component size result:' + str(b.runScen2_3_1()))
-    # b.getStats()
+    b.getStats()
     # nx.draw(b.gObj.graph, node_color = color_map)
     # plt.show()
 

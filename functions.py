@@ -92,11 +92,35 @@ def getMinimizingIndex2(person, locations, gObj, lastLocIndex):
         if(min_size == -1 or min_loc_index == -1):
             min_loc_index = loc_index
             min_size = largestCC
-        else:
-            if(largestCC < min_size):
-                min_loc_index = loc_index
-                min_size = largestCC
+        elif(largestCC < min_size):
+            min_loc_index = loc_index
+            min_size = largestCC
     return min_loc_index
+
+# gObj must be of type GymGroceryGraph
+def getMinimizingIndex2Random(person, locations, gObj, lastLocIndex):
+    min_size = -1
+    min_loc_index = -1
+    for i in locations:
+        loc_index = i + lastLocIndex
+        # Get the largest number of people in a connected component
+        largestCC = gObj.testUnion(person, loc_index) if (
+            gObj.testUnion(person, loc_index)  > gObj.largestPeopleGroup
+        ) else gObj.largestPeopleGroup
+        
+        if(min_size == -1 or min_loc_index == -1):
+            min_loc_index = loc_index
+            min_size = largestCC
+        elif(largestCC < min_size):
+            min_loc_index = loc_index
+            min_size = largestCC
+        elif(largestCC == min_size):
+            # Added random factor to this
+            random_selection = np.random.randint(2)
+            if(random_selection == 0): 
+                min_loc_index = loc_index
+    return min_loc_index
+
 
 def getMaximizingIndex(person, locations, gObj, lastLocIndex):
     min_size = -1

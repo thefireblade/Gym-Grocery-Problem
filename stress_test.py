@@ -120,21 +120,29 @@ def stressTestCompareScen2_2Scen2_3(k, n_0 = 10, ls_0 = 3, ls_1 = 3):
         write("Function 1 has {win} wins, {loss} losses, and {tie} ties over Function 2.\n".format(
             win=str(win), loss=str(loss), tie=str(tie)))
 
-def compareScen2_2Scen2_3(k, n_0 = 200, ls_0 = 30, ls_1 = 35, tests = 300):
+def iterateMethods(gObj, func):
+    try:
+        func = getattr(gObj, func)
+        return func()
+    except AttributeError:
+        print("{func} not found".format(func = func))
+    return -1
+
+def compareTest(k, n_0 = 200, ls_0 = 30, ls_1 = 35, tests = 300, function1 = "runScen2_3_1", function2 = "runScen2_3"):
     n = n_0
     location_set = [ls_0, ls_1]
     win = 0
     loss = 0
     tie = 0
     for i in range(tests):
-        print("Commencing test #" + str(i))
+        print("Commencing test {num} for functions {func1} and {func2}".format(num = i, func1=function1, func2=function2))
         obj = DrugStoreCoffeeShops(n, k, location_set)
         obj.setup()
         
         result_0 = -1 #The maximum returned component of function1
         result_1 = -1 #The maximum returned compononent of function2
         try:
-            result_0 = obj.runScen2_3_1_rand()
+            result_0 = iterateMethods(obj, function1)
 
             # Write the results for scenario 2 (Pairing both shops to a person at a time)
             # writeResults(i, first_elapse, "{:e}".format(n), k, ["{:e}".format(location_set[0]), "{:e}".format(location_set[1])],
@@ -142,7 +150,7 @@ def compareScen2_2Scen2_3(k, n_0 = 200, ls_0 = 30, ls_1 = 35, tests = 300):
             
             obj.resetGraph() #Reset the graph so we can compare to the second test
 
-            result_1 = obj.runScen2_3_1()
+            result_1 = iterateMethods(obj, function2)
 
             # Write the results for scenario 2.3 (Pairing a shop to each person at a time)
             # writeResults(i, second_elapse, "{:e}".format(n), k, ["{:e}".format(location_set[0]), "{:e}".format(location_set[1])], 
@@ -152,6 +160,8 @@ def compareScen2_2Scen2_3(k, n_0 = 200, ls_0 = 30, ls_1 = 35, tests = 300):
             traceback.print_exc()
             print(e)
             break
+        if result_0 < 0 or result_1 < 0:
+            pass
         if(result_0 == result_1):
             tie += 1
         else:
@@ -162,12 +172,16 @@ def compareScen2_2Scen2_3(k, n_0 = 200, ls_0 = 30, ls_1 = 35, tests = 300):
         del obj # Delete the DrugStoreCoffeeShop Object after using it
     write("Function 1 has {win} wins, {loss} losses, and {tie} ties over Function 2.\n".format(
         win=str(win), loss=str(loss), tie=str(tie)), "unit_test_2_3.txt")
+    write("Constants : {n} People {l1} Gyms {l2} Stores; K closest match = {k}".format(
+        n=n_0, k=k, l1 = ls_0, l2 = ls_1), "unit_test_2_3.txt")
 
 if __name__ == "__main__" :
     # #k doesnn't matter with scen2
 	# stressTestN(stressTestScen2, 5, [5, 5])
 	# stressTestLocNum(stressTestScen2, 100, 5)
 	# stressTestLocSize(stressTestScen2, 1000, 5)
-    for i in range(20):
-        compareScen2_2Scen2_3(6, tests = 500)
+    tempObj = DrugStoreCoffeeShops(0, 0, [0,0])
+    compareTest(3, tests = 3000, function1=tempObj.runScen2_2.__name__, function2=tempObj.runScen2_2Random.__name__)
+    compareTest(3, tests = 3000, function1=tempObj.runScen2_3.__name__, function2=tempObj.runScen2_3Random.__name__)
+    compareTest(3, tests = 3000, function1=tempObj.runScen2_3_1.__name__, function2=tempObj.runScen2_3_1_rand.__name__)
     # stressTestCompareScen2_2Scen2_3(3)
