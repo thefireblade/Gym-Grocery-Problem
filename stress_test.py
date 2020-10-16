@@ -33,6 +33,16 @@ def stressTestScen2(n, k, location_set):
     del obj
     return time.perf_counter() - start
 
+def stressTestScen2_3_1(n, k, location_set):
+    #time is in seconds   
+    obj = DrugStoreCoffeeShops(n, k, location_set)
+    obj.setup()
+    start = time.perf_counter()
+    obj.runScen2_3_1()
+    del obj
+    return time.perf_counter() - start
+
+
 def stressTestN(function, k, location_set):
     n = 2
     for i in range(100000): 
@@ -42,7 +52,7 @@ def stressTestN(function, k, location_set):
         except:
             break
         writeResults(i, time_elapsed, "{:e}".format(n), k, location_set)
-        if(time_elapsed > 1800):
+        if(time_elapsed > time_limit):
             break
         n = n * 2
 
@@ -51,7 +61,7 @@ def stressTestLocSize(function, n, k):
     for i in range(100, 400): 
         time_elapsed = function(n, k, location_set)
         writeResults(i, time_elapsed, n, k, location_set)
-        if(time_elapsed > 1800):
+        if(time_elapsed > time_limit):
             break
         location_set.append(10)
 
@@ -65,7 +75,7 @@ def stressTestLocNum(function, n, k):
         except:
             break
         writeResults(i, time_elapsed, n, k, ["{:e}".format(x), "{:e}".format(x)])
-        if(time_elapsed > 1800):
+        if(time_elapsed > time_limit):
             break
         x = x * 2
 
@@ -165,9 +175,9 @@ def compareScen2_2Scen2_3(k, n_0 = 200, ls_0 = 30, ls_1 = 35, tests = 300):
 
 if __name__ == "__main__" :
     # #k doesnn't matter with scen2
-	# stressTestN(stressTestScen2, 5, [5, 5])
+	stressTestN(stressTestScen2_3_1, 5, [5, 5])
 	# stressTestLocNum(stressTestScen2, 100, 5)
 	# stressTestLocSize(stressTestScen2, 1000, 5)
-    for i in range(20):
-        compareScen2_2Scen2_3(6, tests = 500)
+    # for i in range(20):
+    #     compareScen2_2Scen2_3(6, tests = 500)
     # stressTestCompareScen2_2Scen2_3(3)
