@@ -10,15 +10,13 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 ############################################### Constants ###########################################
-imported_graph = "data/expandingCircle/random2_25_05_04_05_bgm.gml"
+test_graph = "./data/exports/text.gml"
+imported_graph = "./data/expandingCircle/random2_25_05_04_05_bgm.gml"
 original_graph = "./data/expandingCircle/random2_25_05_04_05.gml"
-
-
-
-############################################### VARIABLES ###########################################
-n = 100 #number of people
-k = 3 # k random closest (For scenario 1)
-location_set = [25, 25] #Each item in this set represents the # of randomly generated locations for Coffee Shops, Drugstores, etc
+export_filepath = './data/exports/random_400people_20gym_20store_5k_2.gml'
+n = 400 # number of people
+k = 5 # k random closest (For scenario 1)
+location_set = [20, 20] #Each item in this set represents the # of randomly generated locations for Coffee Shops, Drugstores, etc
 
 
 ############################################# COMPONENTS ################################################
@@ -175,24 +173,26 @@ if __name__ == "__main__" :
 
     #Color Maps
     
-    color_map = []
-    for node in range(140):
-        if node < 100:
-            color_map.append('green')
-        elif node < 120:
-            color_map.append('blue')
-        else: 
-            color_map.append('red')     
+    # color_map = []
+    # for node in range(150):
+    #     if node < 110:
+    #         color_map.append('green')
+    #     elif node < 130:
+    #         color_map.append('blue')
+    #     else: 
+    #         color_map.append('red')     
 
     #Test for Imports
     b = PlottedStoreShops(n, k, location_set)
-    b.import_lgraph(original_graph, original_graph)
-    nx.draw(b.gObj.graph, node_color = color_map)
-    plt.show()
-    print('Max Component size result:' + str(b.runScen2_3_1()))
-    b.getStats()
-    nx.draw(b.gObj.graph, node_color = color_map)
-    plt.show()
+    b.setup()
+    b.export(export_filepath)
+    # b.import_lgraph(test_graph, test_graph)
+    # nx.draw(b.gObj.graph, node_color = color_map)
+    # plt.show()
+    # print('Max Component size result:' + str(b.runScen2_3_1()))
+    # b.getStats()
+    # nx.draw(b.gObj.graph, node_color = color_map)
+    # plt.show()
 
     # c = PlottedStoreShops(n, k, location_set)
     # c.import_lgraph(original_graph, original_graph)

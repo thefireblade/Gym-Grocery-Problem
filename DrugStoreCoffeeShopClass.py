@@ -8,6 +8,16 @@ import matplotlib.pyplot as plt
 from collections import deque
 import numpy as np
 
+########################### Constants ###############################
+
+location_names = ['gym', 'store', 'theater', 'home', 
+                'park', 'library', 'office', 'work',
+                'base', 'club', 'school', 'hospital']
+people_type = 'people'
+default_data_name = './data/exports/text.gml'
+
+#####################################################################
+
 class DrugStoreCoffeeShops():
     # Don't set 'S', 'C', 'G', 'data'
     def __init__(self, n = 20, k = 5, location_set = [5, 5]):
@@ -86,7 +96,46 @@ class DrugStoreCoffeeShops():
                         'person': int(index) - 1
                     })
         self.person_maps = person_maps
-
+    
+    # Export a version of a graph in gml format with labels: "type": "people", and label == id + 1
+    def export(self, filename = default_data_name):
+        graph_to_export = nx.Graph()
+        # Add all people to the graph
+        for person in range(self.n):
+            graph_to_export.add_node(person, type=people_type)
+        # Add all locations to the graph
+        location_index = self.n
+        for locations in range(len(self.C)):
+            location_name = location_names[locations]
+            for _ in range(len(self.C[locations])):
+                graph_to_export.add_node(location_index, type=location_name)
+                location_index += 1
+            
+        location_ranges = [sum([len(self.C[j]) for j in range(i + 1)]) + self.n for i in range(len(self.C))]
+        # Add all connections to the graph
+        for person in range(self.n):
+            found_locations = [False for i in range(len(location_ranges))]
+            # Check if graph connection exist between person
+            if(self.gObj):
+                neighbors = self.gObj.graph.neighbors(person)
+                if(len(self.gObj.graph.neighbors(person)) > 0):
+                    for neighbor in neighbors:
+                        for i in range(len(location_ranges)):
+                            if neighbor < location_ranges[i]:
+                                found_locations[i] = True
+                                break
+                        graph_to_export.add_edge(person, neighbor)
+            location_index = self.n
+            # Add all possible connections within k 
+            for locations in range(len(self.C)):
+                if(not found_locations[locations]):
+                    k_closest = functions.get_k_closest(self.S[person], self.C[locations], self.k)
+                    k_closest_mapped = [i + location_index for i in k_closest]
+                    for location in k_closest_mapped:
+                        graph_to_export.add_edge(person, location)
+                location_index += len(self.C[locations])
+        graph_to_export = nx.relabel_nodes(graph_to_export, lambda x: x + 1)
+        nx.write_gml(graph_to_export, filename)
     # Required to run if the graph is not imported
     def setup(self):
         functions.initS(self.S, self.n)
@@ -369,7 +418,7 @@ class DrugStoreCoffeeShops():
         ########################### RANDOM PART OF THIS ALGORITHM ################################            
                 #RANDOMLY CHOOSE A TIE HERE AND RESHUFFLE THE REST BACK INTO THE STACK
                 if(not stack and ties_list):
-                    print("Number of ties {num}".format(num= len(ties_list)))
+                    # print("Number of ties {num}".format(num= len(ties_list)))
                     # Get random index for ties list
                     random_selection = np.random.randint(len(ties_list))
                     # Extract the person map from ties_list
