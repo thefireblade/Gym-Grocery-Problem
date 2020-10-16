@@ -187,7 +187,7 @@ def compareTest(k, n_0 = 200, ls_0 = 30, ls_1 = 35, tests = 300, function1 = "ru
 
 if __name__ == "__main__" :
     # #k doesnn't matter with scen2
-	stressTestN(stressTestScen2_3_1, 5, [5, 5])
+	# stressTestN(stressTestScen2_3_1, 5, [5, 5])
 	# stressTestLocNum(stressTestScen2, 100, 5)
 	# stressTestLocSize(stressTestScen2, 1000, 5)
     tempObj = DrugStoreCoffeeShops(0, 0, [0,0])
