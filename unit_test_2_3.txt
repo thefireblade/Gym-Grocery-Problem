@@ -37,3 +37,8 @@ Function 1 has 0 wins, 0 losses, and 500 ties over Function 2.
 Function 1 has 0 wins, 0 losses, and 500 ties over Function 2.
 Function 1 has 0 wins, 0 losses, and 500 ties over Function 2.
 Function 1 has 0 wins, 0 losses, and 500 ties over Function 2.
+
+runScen2_2 has 187 wins, 2729 losses, and 84 ties over runScen2_2Random.
+Constants : 200 People 30 Gyms 35 Stores; K closest match = 3runScen2_3 has 368 wins, 1922 losses, and 710 ties over runScen2_3Random.
+Constants : 200 People 30 Gyms 35 Stores; K closest match = 3runScen2_3_1 has 0 wins, 0 losses, and 3000 ties over runScen2_3_1_rand.
+Constants : 200 People 30 Gyms 35 Stores; K closest match = 3

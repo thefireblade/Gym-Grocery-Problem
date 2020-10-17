@@ -180,8 +180,8 @@ def compareTest(k, n_0 = 200, ls_0 = 30, ls_1 = 35, tests = 300, function1 = "ru
             else:
                 loss += 1
         del obj # Delete the DrugStoreCoffeeShop Object after using it
-    write("Function 1 has {win} wins, {loss} losses, and {tie} ties over Function 2.\n".format(
-        win=str(win), loss=str(loss), tie=str(tie)), "unit_test_2_3.txt")
+    write("{func1} has {win} wins, {loss} losses, and {tie} ties over {func2}.\n".format(
+        win=str(win), loss=str(loss), tie=str(tie), func1 = function1, func2 = function2), "unit_test_2_3.txt")
     write("Constants : {n} People {l1} Gyms {l2} Stores; K closest match = {k}".format(
         n=n_0, k=k, l1 = ls_0, l2 = ls_1), "unit_test_2_3.txt")
 
