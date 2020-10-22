@@ -1,12 +1,14 @@
 import functions
 from graph import DisjointSetGraph
 from graph import GymGroceryGraph
+from graph import UndoGymGroceryGraph
 from networkx import draw_networkx
 import networkx as nx
 import time
 import matplotlib.pyplot as plt
 from collections import deque
 import numpy as np
+import random
 
 ########################### Constants ###############################
 
@@ -534,8 +536,10 @@ class DrugStoreCoffeeShops():
         #init the first row for the list_queue, runs in O(n*k*|m|) or O(V) if imported L graph
         list_queue = [deque() for i in range(vertices)]
         if self.person_maps:
+            random.shuffle(self.person_maps)
             list_queue[0].extendleft(self.person_maps)
         else:
+            person_maps = []
             for person in range(len(self.S)):
                 locations_index = len(self.S)
                 for locations in range(len(self.C)):
@@ -546,9 +550,12 @@ class DrugStoreCoffeeShops():
                         'person': person
                     }
                     # Add the valid list of shops - person combos to the first stack
+                    person_maps.append(person_map)
                     list_queue[0].append(person_map)
                     locations_index += len(self.C[locations])
-
+            random.shuffle(person_maps)
+            list_queue[0].extendleft(person_maps)
+            
         for i in range(len(list_queue)):
             goal = i + 1
             stack = list_queue[i]
@@ -618,50 +625,55 @@ class DrugStoreCoffeeShops():
         functions.export(self.data)
 
     #Helper function for backtracking
-    def exhaustive(self, size, i, j, l1): 
-        if(i == len(self.S)):
+    def exhaustive_helper(self, size, i, j, l1): 
+        if(i == self.n):
             # print("###############       The size (-1) is now " + str(size) + "     ##############")
             return size
         if(j == len(self.C)):
             return -1
         high = -1
         for l in range(l1, len(self.C[j])):    
-            locations_index = len(self.S) + (sum([len(self.C[i]) for i in range(j)])) + l
+            locations_index = self.n + (sum([len(self.C[i]) for i in range(j)])) + l
             # print("Adding edge between " + str(i) + " and " + str(locations_index))
             self.exhaustG.addEdge(i, locations_index)
+            self.exhaustG.union(i, locations_index)
             max_size = -1
             if(j + 1 == len(self.C)):
-                max_size = self.exhaustive(self.exhaustG.largestCC(), i + 1, 0, l)
+                max_size = self.exhaustive_helper(self.exhaustG.largestPeopleGroup, i + 1, 0, l)
             else:
-                max_size = self.exhaustive(self.exhaustG.largestCC(), i, j + 1, l)
+                max_size = self.exhaustive_helper(self.exhaustG.largestPeopleGroup, i, j + 1, l)
             if((max_size < high or high < 0) and max_size > 0):
                 high = max_size
             #Backtrack
             self.exhaustG.removeEdge(i, locations_index)
+            self.exhaustG.undoUnion()
             # print("Removing edge between " + str(i) + " and " + str(locations_index))
         # print("###############       The high is now " + str(high) + "     ##############")    
         return high
 
     #Backtracking function
-    def exhaustive_main(self):
-        vertices = len(self.S) + sum([len(i) for i in self.C])
-        self.exhaustG = DisjointSetGraph(vertices) # Graph Object
+    def exhaustive(self):
+        vertices = self.n + sum([len(i) for i in self.C])
+        self.exhaustG = UndoGymGroceryGraph(vertices, self.n) # Graph Object
         self.exhaustG.initVertices()
         max_size = -1
         i,j = 0,0
         for l in range(len(self.C[0])):
-            locations_index = len(self.S) + l
+            print("{p}/{t} complete".format(p=l, t = len(self.C[0])))
+            locations_index = self.n + l
             self.exhaustG.addEdge(i, locations_index)
+            self.exhaustG.union(i, locations_index)
             # print("Adding edge between " + str(i) + " and " + str(locations_index))
             size = -1
             if(1 == len(self.C)):
-                size = self.exhaustive(self.exhaustG.largestCC(), i + 1, 0, l)
+                size = self.exhaustive_helper(self.exhaustG.largestPeopleGroup, i + 1, 0, l)
             else:
-                size = self.exhaustive(self.exhaustG.largestCC(), i, j + 1, l)
+                size = self.exhaustive_helper(self.exhaustG.largestPeopleGroup, i, j + 1, l)
             if(max_size < 0 or max_size > size and size > 0):
                 max_size = size
             #Backtrack
             self.exhaustG.removeEdge(0, locations_index)
+            self.exhaustG.undoUnion()
             # print("Removing edge between " + str(i) + " and " + str(locations_index))
         return max_size
 
@@ -674,8 +686,8 @@ class PlottedStoreShops(DrugStoreCoffeeShops):
         # for person in self.S:
         #     plt.plot()
     def animate(self, function, timer = 0.1):
-        plt.xlim(40.589971, 41.139365)
-        plt.ylim(-73.768044, -72.225494)
+        plt.xlim(functions.x_lower, functions.x_upper)
+        plt.ylim(functions.y_lower, functions.y_upper)
         plt.title("Drug Stores, Coffee Shops, and People")
         plt.ylabel("Longitude")
         plt.xlabel("Latitude")

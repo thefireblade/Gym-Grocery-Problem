@@ -1,6 +1,8 @@
 from collections import defaultdict 
 import networkx as nx
 import secrets
+import copy
+from collections import deque
 
 class DisjointNode():
     def __init__(self, rank, index, components = 0):
@@ -136,3 +138,63 @@ class GymGroceryGraph(DisjointSetGraph):
             testUnion  > self.largestPeopleGroup
         ) else self.largestPeopleGroup
         return testedCC
+# Class specifically to undo a change. Created for the brute force method
+class UndoGymGroceryGraph(GymGroceryGraph):
+    def __init__(self, vertices, numPeople):
+        super().__init__(vertices, numPeople)
+        self.ununion = deque()
+    #OVERRIDE, Does not support color
+    #Get the shop index 's1' and shop index 's2' and perform a union on the nodes 
+    def union(self, s1, s2):
+        top_parent = self.find(s1)
+        bot_parent = self.find(s2)
+        #### THERE WAS A CHANGE HERE ########
+        prev_parent = bot_parent.parent
+        prev_largest = self.largestPeopleGroup
+        #### THERE WAS A CHANGE HERE ########
+        if(top_parent == bot_parent):
+            #### THERE WAS A CHANGE HERE ########
+            self.ununion.append({
+                "top_parent": top_parent,
+                "bot_parent": bot_parent,
+                "prev_parent": prev_parent,
+                "prev_largest": prev_largest,
+                "change": False
+            })
+            #### THERE WAS A CHANGE HERE ########
+            return
+        if(bot_parent.rank > top_parent.rank):
+            temp = bot_parent
+            bot_parent = top_parent
+            top_parent = temp
+        bot_parent.parent = top_parent
+        bot_parent.color = top_parent.color
+        top_parent.rank += 1
+        top_parent.components += bot_parent.components
+        if(self.largestPeopleGroup < top_parent.components):
+            self.largestPeopleGroup = top_parent.components 
+        #### THERE WAS A CHANGE HERE ########
+        self.ununion.append({
+            "top_parent": top_parent,
+            "bot_parent": bot_parent,
+            "prev_parent": prev_parent,
+            "prev_largest": prev_largest,
+            "change": True
+        })
+        #### THERE WAS A CHANGE HERE ########
+
+    #Function the undoes the most recent union
+    def undoUnion(self):
+        union = self.ununion.pop()
+        #Do nothing because nothing changed
+        if(not union['change']):
+            return
+        top_parent = union['top_parent']
+        bot_parent = union['bot_parent']
+        prev_parent = union['prev_parent']
+        prev_largest = union['prev_largest']
+
+        top_parent.components -= bot_parent.components
+        bot_parent.parent = prev_parent
+        top_parent.rank -= 1
+        self.largestPeopleGroup = prev_largest
