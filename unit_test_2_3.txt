@@ -53,3 +53,32 @@ runScen2_3_1_rand has 50 wins, 0 losses, and 0 ties over iterate(runScen2_2Rando
  
  runScen2_3_1_rand has 50 wins, 0 losses, and 0 ties over iterate(runScen2_2Random, 500). 
  And runScen2_3_1_rand was faster by 5.760987e+01%Constants : 130 People 20 Gyms 25 Stores; K closest match = 3
+
+
+iterateMe(runScen2_3_1_rand,1) has an average largest people size of 127.16. 
+ iterateMe(runScen2_3_1_rand,1) ran at an average time of 5.251949e-01(s)
+Constants : 130 People 20 Gyms 25 Stores; K closest match = 3
+iterateMe(runScen2_3_1_rand,2) has an average largest people size of 123.24. 
+ iterateMe(runScen2_3_1_rand,2) ran at an average time of 7.063945e-01(s)
+Constants : 130 People 20 Gyms 25 Stores; K closest match = 3
+iterateMe(runScen2_3_1_rand,3) has an average largest people size of 121.095. 
+ iterateMe(runScen2_3_1_rand,3) ran at an average time of 8.786630e-01(s)
+Constants : 130 People 20 Gyms 25 Stores; K closest match = 3
+iterateMe(runScen2_3_1_rand,4) has an average largest people size of 117.125. 
+ iterateMe(runScen2_3_1_rand,4) ran at an average time of 1.061587e+00(s)
+Constants : 130 People 20 Gyms 25 Stores; K closest match = 3
+iterateMe(runScen2_3_1_rand,5) has an average largest people size of 116.045. 
+ iterateMe(runScen2_3_1_rand,5) ran at an average time of 1.233015e+00(s)
+Constants : 130 People 20 Gyms 25 Stores; K closest match = 3
+iterateMe(runScen2_3_1_rand,6) has an average largest people size of 111.2. 
+ iterateMe(runScen2_3_1_rand,6) ran at an average time of 1.408838e+00(s)
+Constants : 130 People 20 Gyms 25 Stores; K closest match = 3
+iterateMe(runScen2_3_1_rand,7) has an average largest people size of 110.915. 
+ iterateMe(runScen2_3_1_rand,7) ran at an average time of 1.588592e+00(s)
+Constants : 130 People 20 Gyms 25 Stores; K closest match = 3
+iterateMe(runScen2_3_1_rand,8) has an average largest people size of 107.705. 
+ iterateMe(runScen2_3_1_rand,8) ran at an average time of 1.779565e+00(s)
+Constants : 130 People 20 Gyms 25 Stores; K closest match = 3
+iterateMe(runScen2_3_1_rand,9) has an average largest people size of 108.06. 
+ iterateMe(runScen2_3_1_rand,9) ran at an average time of 1.952386e+00(s)
+Constants : 130 People 20 Gyms 25 Stores; K closest match = 3

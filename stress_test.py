@@ -288,7 +288,7 @@ if __name__ == "__main__" :
 	# stressTestLocSize(stressTestScen2, 1000, 5)
     tempObj = DrugStoreCoffeeShops(0, 0, [0,0])
     # compareTestTest(3, tests=50)
-    for b in range(1, 50):
-        compareAvgIterate(3, tests = 20, i=b, function1=tempObj.runScen2_3_1_rand.__name__)
+    for b in range(1, 10):
+        compareAvgIterate(3, tests = 200, i=b, function1=tempObj.runScen2_3_1_rand.__name__)
     # compareTest(3, tests = 3000, function1=tempObj.runScen2_3_1.__name__, function2=tempObj.runScen2_3_1_rand.__name__)
     # stressTestCompareScen2_2Scen2_3(3)
