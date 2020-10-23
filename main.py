@@ -173,21 +173,22 @@ if __name__ == "__main__" :
 
     #Color Maps
     
-    # color_map = []
-    # for node in range(150):
-    #     if node < 110:
-    #         color_map.append('green')
-    #     elif node < 130:
-    #         color_map.append('blue')
-    #     else: 
-    #         color_map.append('red')     
+    color_map = []
+    for node in range(140):
+        if node < 100:
+            color_map.append('green')
+        elif node < 120:
+            color_map.append('blue')
+        else: 
+            color_map.append('red')     
 
     #Test for Imports
     b = PlottedStoreShops(n, k, location_set)
     b.setup()
     # b.export(export_filepath)
-    # b.import_lgraph(test_graph, test_graph)
-    print("the best result is {s}".format(s=b.runScen2_3_1_rand()))
+    b.import_lgraph(original_graph, original_graph)
+    # b.runScen2_2Random()
+    print("the best result is {s}".format(s=b.iterateMe(b.runScen2_2Random.__name__, 3000)))
     # nx.draw(b.gObj.graph, node_color = color_map)
     # plt.show()
     # print('Max Component size result:' + str(b.runScen2_3_1()))

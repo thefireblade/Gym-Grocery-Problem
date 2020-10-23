@@ -46,15 +46,21 @@ class DrugStoreCoffeeShops():
         origLGraph = nx.read_gml(origLGraphPath) 
         node_count = 0
         people_count = 0
-
+        gym_count = 0
+        store_count = 0
         # Get a count of the number of people O(n) and vertices
         for index in origLGraph.nodes:
             if origLGraph.nodes[index]['type'] == "people":
                 people_count += 1
+            if origLGraph.nodes[index]['type'] == "gym":
+                gym_count += 1
+            if origLGraph.nodes[index]['type'] == "store":
+                store_count += 1
             node_count += 1
             
         self.n = people_count
         self.S = [0 for i in range(people_count)]
+        self.C = [[0 for i in range(gym_count)],[0 for i in range(store_count)]]
         self.vertices = node_count
         person_maps = []
         # Initialize the graph object
@@ -158,7 +164,6 @@ class DrugStoreCoffeeShops():
 
     def resetGraph(self):
         self.G = None
-        self.imported = False
         self.gObj = None
 
     def runScen1(self):
@@ -180,16 +185,19 @@ class DrugStoreCoffeeShops():
 
     def runScen2(self):
         vertices = len(self.S) + sum([len(i) for i in self.C])
-        if not self.imported:
+        if not self.gObj:
             self.gObj = GymGroceryGraph(vertices, len(self.S)) # Graph Object
             self.gObj.initVertices()
         for i in range(len(self.S)):
             locations_index = len(self.S)
             for j in range(len(self.C)):        
                 k_closest = []
-                if(self.imported):
-                    k_closest = self.k_closest[j][i]
-                    locations_index = 0
+                if(k_closest):
+                    try:
+                        k_closest = self.k_closest[j][i]
+                        locations_index = 0
+                    except:
+                        continue #The k_closest has already been added
                 else:
                     k_closest = functions.get_k_closest(self.S[i], self.C[j], self.k)
                 min_comp_loc_index = functions.getMinimizingIndex2(i, k_closest, self.gObj, locations_index)
@@ -206,16 +214,19 @@ class DrugStoreCoffeeShops():
 
     def runScen2Random(self):
         vertices = len(self.S) + sum([len(i) for i in self.C])
-        if not self.imported:
+        if not self.gObj:
             self.gObj = GymGroceryGraph(vertices, len(self.S)) # Graph Object
             self.gObj.initVertices()
         for i in range(len(self.S)):
             locations_index = len(self.S)
             for j in range(len(self.C)):        
                 k_closest = []
-                if(self.imported):
-                    k_closest = self.k_closest[j][i]
-                    locations_index = 0
+                if(self.k_closest):
+                    try:
+                        k_closest = self.k_closest[j][i]
+                        locations_index = 0
+                    except:
+                        continue #The k_closest has already been added
                 else:
                     k_closest = functions.get_k_closest(self.S[i], self.C[j], self.k)
                 min_comp_loc_index = functions.getMinimizingIndex2Random(i, k_closest, self.gObj, locations_index)
@@ -232,16 +243,19 @@ class DrugStoreCoffeeShops():
 
     def runScen2_2(self):
         vertices = len(self.S) + sum([len(i) for i in self.C])
-        if not self.imported:
+        if not self.gObj:
             self.gObj = GymGroceryGraph(vertices, len(self.S)) # Graph Object
             self.gObj.initVertices()
         for j in range(len(self.C)):     
             locations_index = len(self.S) + (sum([len(self.C[k]) for k in range(j)]))   
             for i in range(len(self.S)): 
                 k_closest = []
-                if(self.imported):
-                    k_closest = self.k_closest[j][i]
-                    locations_index = 0
+                if(self.k_closest):
+                    try:
+                        k_closest = self.k_closest[j][i]
+                        locations_index = 0
+                    except:
+                        continue #The k_closest has already been added
                 else:
                     k_closest = functions.get_k_closest(self.S[i], self.C[j], self.k)
                 min_comp_loc_index = functions.getMinimizingIndex2(i, k_closest, self.gObj, locations_index)
@@ -257,16 +271,19 @@ class DrugStoreCoffeeShops():
 
     def runScen2_2Random(self):
         vertices = len(self.S) + sum([len(i) for i in self.C])
-        if not self.imported:
+        if not self.gObj:
             self.gObj = GymGroceryGraph(vertices, len(self.S)) # Graph Object
             self.gObj.initVertices()
         for j in range(len(self.C)):     
             locations_index = len(self.S) + (sum([len(self.C[k]) for k in range(j)]))   
             for i in range(len(self.S)): 
                 k_closest = []
-                if(self.imported):
-                    k_closest = self.k_closest[j][i]
-                    locations_index = 0
+                if(self.k_closest):
+                    try:
+                        k_closest = self.k_closest[j][i]
+                        locations_index = 0
+                    except:
+                        continue #The k_closest has already been added
                 else:
                     k_closest = functions.get_k_closest(self.S[i], self.C[j], self.k)
                 min_comp_loc_index = functions.getMinimizingIndex2Random(i, k_closest, self.gObj, locations_index)
@@ -316,14 +333,17 @@ class DrugStoreCoffeeShops():
                 for person in tracker_map[key]:
                     # Check every location for that person
                     locations_index = 0
-                    if(not self.imported):
+                    if(not self.k_closest):
                         locations_index = len(self.S) + key_index_map[key]  
                     
                     k_closest = []
                     # Tabulate the k_closest (Initially runs in O(n) time)
                     if f"{person}_{key}" not in k_closest_map.keys():
-                        if(self.imported):
-                            k_closest_map[f"{person}_{key}"] = self.k_closest[key][person]
+                        if(self.k_closest):
+                            try:
+                                k_closest_map[f"{person}_{key}"] = self.k_closest[key][person]
+                            except:
+                                continue #The k_closest has already been added
                         else:
                             k_closest_map[f"{person}_{key}"] = functions.get_k_closest(self.S[person], self.C[key], self.k)
                     k_closest = k_closest_map[f"{person}_{key}"]
@@ -370,7 +390,7 @@ class DrugStoreCoffeeShops():
     def runScen2_3Random(self):
         # Graph Object initialization
         vertices = len(self.S) + sum([len(i) for i in self.C])
-        if not self.imported:
+        if not self.gObj:
             self.gObj = GymGroceryGraph(vertices, len(self.S)) # Graph Object
             self.gObj.initVertices()
 
@@ -401,14 +421,17 @@ class DrugStoreCoffeeShops():
                 for person in tracker_map[key]:
                     # Check every location for that person
                     locations_index = 0
-                    if(not self.imported):
+                    if(not self.k_closest):
                         locations_index = len(self.S) + key_index_map[key]  
                     
                     k_closest = []
                     # Tabulate the k_closest (Initially runs in O(n) time)
                     if f"{person}_{key}" not in k_closest_map.keys():
-                        if(self.imported):
-                            k_closest_map[f"{person}_{key}"] = self.k_closest[key][person]
+                        if(self.k_closest):
+                            try:
+                                k_closest_map[f"{person}_{key}"] = self.k_closest[key][person]
+                            except:
+                                continue #The k_closest has already been added
                         else:
                             k_closest_map[f"{person}_{key}"] = functions.get_k_closest(self.S[person], self.C[key], self.k)
                     k_closest = k_closest_map[f"{person}_{key}"]
