@@ -159,6 +159,7 @@ class DrugStoreCoffeeShops():
     def resetGraph(self):
         self.G = None
         self.imported = False
+        self.gObj = None
 
     def runScen1(self):
         self.G = nx.Graph()
@@ -555,7 +556,7 @@ class DrugStoreCoffeeShops():
                     locations_index += len(self.C[locations])
             random.shuffle(person_maps)
             list_queue[0].extendleft(person_maps)
-            
+
         for i in range(len(list_queue)):
             goal = i + 1
             stack = list_queue[i]
@@ -619,6 +620,15 @@ class DrugStoreCoffeeShops():
         stats['max_connected_component_size'] = self.gObj.largestPeopleGroup
         self.data['Scenario_2_3_1'] = stats
         return stats['max_connected_component_size']
+
+    def iterateMe(self, function, iterations = 50):
+        func = getattr(self, function)
+        best = func()
+        for _ in range(iterations):
+            new = func()
+            if(best > new):
+                best = new
+            self.resetGraph()
 
     def getStats(self):
         print(self.data)

@@ -187,7 +187,7 @@ if __name__ == "__main__" :
     b.setup()
     # b.export(export_filepath)
     # b.import_lgraph(test_graph, test_graph)
-    print("the best result is {s}".format(s=b.exhaustive()))
+    print("the best result is {s}".format(s=b.runScen2_3_1_rand()))
     # nx.draw(b.gObj.graph, node_color = color_map)
     # plt.show()
     # print('Max Component size result:' + str(b.runScen2_3_1()))

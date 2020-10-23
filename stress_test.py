@@ -130,7 +130,7 @@ def stressTestCompareScen2_2Scen2_3(k, n_0 = 10, ls_0 = 3, ls_1 = 3):
         write("Function 1 has {win} wins, {loss} losses, and {tie} ties over Function 2.\n".format(
             win=str(win), loss=str(loss), tie=str(tie)))
 
-def iterateMethods(gObj, func):
+def findMethod(gObj, func):
     try:
         func = getattr(gObj, func)
         return func()
@@ -152,7 +152,7 @@ def compareTest(k, n_0 = 200, ls_0 = 30, ls_1 = 35, tests = 300, function1 = "ru
         result_0 = -1 #The maximum returned component of function1
         result_1 = -1 #The maximum returned compononent of function2
         try:
-            result_0 = iterateMethods(obj, function1)
+            result_0 = findMethod(obj, function1)
 
             # Write the results for scenario 2 (Pairing both shops to a person at a time)
             # writeResults(i, first_elapse, "{:e}".format(n), k, ["{:e}".format(location_set[0]), "{:e}".format(location_set[1])],
@@ -160,7 +160,7 @@ def compareTest(k, n_0 = 200, ls_0 = 30, ls_1 = 35, tests = 300, function1 = "ru
             
             obj.resetGraph() #Reset the graph so we can compare to the second test
 
-            result_1 = iterateMethods(obj, function2)
+            result_1 = findMethod(obj, function2)
 
             # Write the results for scenario 2.3 (Pairing a shop to each person at a time)
             # writeResults(i, second_elapse, "{:e}".format(n), k, ["{:e}".format(location_set[0]), "{:e}".format(location_set[1])], 
