@@ -45,3 +45,9 @@ Constants : 200 People 30 Gyms 35 Stores; K closest match = 3
 runScen2_3_1 has 0 wins, 0 losses, and 3000 ties over runScen2_3_1_rand.
 Constants : 200 People 30 Gyms 35 Stores; K closest match = 3
 
+runScen2_3_1_rand has 50 wins, 0 losses, and 0 ties over iterate(runScen2_2Random). 
+ And runScen2_3_1_rand was faster by 1.186057e+01%Constants : 100 People 20 Gyms 15 Stores; K closest match = 3\
+
+ runScen2_3_1_rand has 50 wins, 0 losses, and 0 ties over iterate(runScen2_2Random). 
+ And runScen2_3_1_rand was faster by 5.886848e+01%Constants : 100 People 20 Gyms 15 Stores; K closest match = 3runScen2_3_1_rand has 50 wins, 0 losses, and 0 ties over iterate(runScen2_3_1_rand). 
+ And runScen2_3_1_rand was faster by 5.760987e+01%Constants : 130 People 20 Gyms 25 Stores; K closest match = 3

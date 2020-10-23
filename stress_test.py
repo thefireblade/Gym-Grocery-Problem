@@ -186,7 +186,7 @@ def compareTest(k, n_0 = 200, ls_0 = 30, ls_1 = 35, tests = 300, function1 = "ru
     write("Constants : {n} People {l1} Gyms {l2} Stores; K closest match = {k}".format(
         n=n_0, k=k, l1 = ls_0, l2 = ls_1), "unit_test_2_3.txt")
         
-def compareTestTest(k, n_0 = 100, ls_0 = 20, ls_1 = 15, tests = 300):
+def compareTestTest(k, n_0 = 130, ls_0 = 20, ls_1 = 25, tests = 300):
     function1 = "runScen2_3_1_rand" 
     function2 = "iterate(runScen2_3_1_rand)"
     n = n_0
@@ -215,7 +215,7 @@ def compareTestTest(k, n_0 = 100, ls_0 = 20, ls_1 = 15, tests = 300):
             obj.resetGraph() #Reset the graph so we can compare to the second test
 
             start_1 = time.perf_counter()
-            result_1 = obj.iterateMe(function1)
+            result_1 = obj.iterateMe(obj.runScen2_2Random.__name__, 500)
             timer_1 += time.perf_counter() - start_1
             # Write the results for scenario 2.3 (Pairing a shop to each person at a time)
             # writeResults(i, second_elapse, "{:e}".format(n), k, ["{:e}".format(location_set[0]), "{:e}".format(location_set[1])], 
@@ -237,7 +237,7 @@ def compareTestTest(k, n_0 = 100, ls_0 = 20, ls_1 = 15, tests = 300):
         del obj # Delete the DrugStoreCoffeeShop Object after using it
     write("{func1} has {win} wins, {loss} losses, and {tie} ties over {func2}. \n".format(
         win=str(win), loss=str(loss), tie=str(tie), func1 = function1, func2 = function2)
-        + " And {funcFast} was faster by ".format(function1 if timer_0 < timer_1 else function2) 
+        + " And {funcFast} was faster by ".format(funcFast = function1 if timer_0 < timer_1 else function2) 
         + "{:e}".format(timer_1 / timer_0 if timer_0 < timer_1 else timer_0 / timer_1) + "%"
         , "unit_test_2_3.txt")
     write("Constants : {n} People {l1} Gyms {l2} Stores; K closest match = {k}".format(
@@ -249,6 +249,6 @@ if __name__ == "__main__" :
 	# stressTestLocNum(stressTestScen2, 100, 5)
 	# stressTestLocSize(stressTestScen2, 1000, 5)
     tempObj = DrugStoreCoffeeShops(0, 0, [0,0])
-    compareTestTest(3)
+    compareTestTest(3, tests=50)
     # compareTest(3, tests = 3000, function1=tempObj.runScen2_3_1.__name__, function2=tempObj.runScen2_3_1_rand.__name__)
     # stressTestCompareScen2_2Scen2_3(3)
