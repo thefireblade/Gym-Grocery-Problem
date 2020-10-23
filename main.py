@@ -186,7 +186,8 @@ if __name__ == "__main__" :
     b = PlottedStoreShops(n, k, location_set)
     b.setup()
     # b.export(export_filepath)
-    b.import_lgraph(original_graph, original_graph)
+    custom_graph = "./data/exports/random_50people_10gym_15store_3k_1.gml"
+    b.import_lgraph(custom_graph, custom_graph)
     # b.runScen2_2Random()
     print("the best result is {s}".format(s=b.iterateMe(b.runScen2_2Random.__name__, 3000)))
     # nx.draw(b.gObj.graph, node_color = color_map)
