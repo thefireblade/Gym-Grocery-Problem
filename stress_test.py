@@ -243,12 +243,52 @@ def compareTestTest(k, n_0 = 130, ls_0 = 20, ls_1 = 25, tests = 300):
     write("Constants : {n} People {l1} Gyms {l2} Stores; K closest match = {k}".format(
         n=n_0, k=k, l1 = ls_0, l2 = ls_1), "unit_test_2_3.txt")
 
+def compareAvgIterate(k, n_0 = 130, ls_0 = 20, ls_1 = 25, tests = 300, i = 50, function1 = "runScen2_3_1_rand" ):
+    n = n_0
+    location_set = [ls_0, ls_1]
+    timer_0 = 0
+    results_total = 0
+    failed_tests = 0
+    for j in range(tests):
+        print("Commencing test {num} for function {func1}".format(num = j, func1 = "iterateMe({f},{i})".format(f=function1, i=i)))
+        obj = DrugStoreCoffeeShops(n, k, location_set)
+        obj.setup()
+        result_0 = -1 #The maximum returned component of function1
+        start_0 = time.perf_counter()
+        try:
+            result_0 = obj.iterateMe(function1, i)
+            results_total += result_0
+            # Write the results for scenario 2 (Pairing both shops to a person at a time)
+            # writeResults(i, first_elapse, "{:e}".format(n), k, ["{:e}".format(location_set[0]), "{:e}".format(location_set[1])],
+            # "unit_test_2_3.txt")
+            
+            timer_0 += time.perf_counter() - start_0
+            # Write the results for scenario 2.3 (Pairing a shop to each person at a time)
+            # writeResults(i, second_elapse, "{:e}".format(n), k, ["{:e}".format(location_set[0]), "{:e}".format(location_set[1])], 
+            # "unit_test_2_3.txt")
+            
+        except Exception as e: 
+            failed_tests += 1
+            traceback.print_exc()
+            print(e)
+            pass
+        del obj # Delete the DrugStoreCoffeeShop Object after using it
+    tests -= failed_tests
+    write("\n{func1} has an average largest people size of {numPeople}. \n".format(
+        func1 = "iterateMe({f},{i})".format(f=function1, i=i) , numPeople = results_total / tests)
+        + " {funcFast} ran at an average time of ".format(funcFast = "iterateMe({f},{i})".format(f=function1, i=i)) 
+        + "{:e}".format(timer_0/tests) + "(s)\n"
+        + "Constants : {n} People {l1} Gyms {l2} Stores; K closest match = {k}".format(
+        n=n_0, k=k, l1 = ls_0, l2 = ls_1), "unit_test_2_3.txt")
+
 if __name__ == "__main__" :
     # #k doesnn't matter with scen2
 	# stressTestN(stressTestScen2_3_1, 5, [5, 5])
 	# stressTestLocNum(stressTestScen2, 100, 5)
 	# stressTestLocSize(stressTestScen2, 1000, 5)
     tempObj = DrugStoreCoffeeShops(0, 0, [0,0])
-    compareTestTest(3, tests=50)
+    # compareTestTest(3, tests=50)
+    for b in range(1, 50):
+        compareAvgIterate(3, tests = 20, i=b, function1=tempObj.runScen2_3_1_rand.__name__)
     # compareTest(3, tests = 3000, function1=tempObj.runScen2_3_1.__name__, function2=tempObj.runScen2_3_1_rand.__name__)
     # stressTestCompareScen2_2Scen2_3(3)

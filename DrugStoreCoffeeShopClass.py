@@ -604,7 +604,7 @@ class DrugStoreCoffeeShops():
                     shoplist_component_sizes.append(size)
                     goal_index += 1
                 # Evaluate the goal and check if we found it or not.
-                if(not goal_found):
+                if(not goal_found and len(shoplist_component_sizes) > 0):
                     # Goal failed, re-evaluate the component sizes and move the map to a different index
                     min_size = min(shoplist_component_sizes) - 1 # -1 since the goal is always index + 1
                     list_queue[min_size].append(person_map)
