@@ -629,6 +629,7 @@ class DrugStoreCoffeeShops():
             if(best > new):
                 best = new
             self.resetGraph()
+        return best
 
     def getStats(self):
         print(self.data)
