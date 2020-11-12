@@ -1,0 +1,35 @@
+https://github.com/taynaud/python-louvain <- Louvain Partitioning Algorithm O(nlogk)
+Spectral Clustering O(n^3)
+
+random_50people_10gym_15store_3k.gml
+
+100 Tests
+Spectral Clustering + Random Algorithm has an average largest people size of 14.16. 
+Spectral Clustering + Random Algorithm ran at an average time of 8.921106e-01(s)
+Constants : 50 People 10 Gyms 15 Stores; K closest match = 3
+
+100 Tests
+Louvain Partitioning + Random Algorithm has an average largest people size of 13.87. 
+Louvain Partitioning + Random Algorithm ran at an average time of 2.250946e-02(s)
+Constants : 50 People 10 Gyms 15 Stores; K closest match = 3
+
+100 Tests
+Random Algorithm (Queue Greedy Algorithm) has an average largest people size of 31.62. 
+Random Algorithm ran at an average time of 1.358476e-02(s)
+Constants : 50 People 10 Gyms 15 Stores; K closest match = 3
+
+2000 Tests
+Spectral Clustering + Random Algorithm (Queue Greedy Algorithm) has an average largest people size of 14.35. 
+Spectral Clustering + Random Algorithm ran at an average time of 8.927986e-01(s)
+Constants : 50 People 10 Gyms 15 Stores; K closest match = 3
+
+2000 Tests
+Louvain Partition + Random Algorithm (Queue Greedy Algorithm) has an average largest people size of 14.0455. 
+Louvain Partition + Random Algorithm ran at an average time of 2.203448e-02(s)
+Constants : 50 People 10 Gyms 15 Stores; K closest match = 3
+
+
+2000 Tests
+Random Algorithm (Queue Greedy Algorithm) has an average largest people size of 30.2675. 
+Random Algorithm ran at an average time of 1.324563e-02(s)
+Constants : 50 People 10 Gyms 15 Stores; K closest match = 3
