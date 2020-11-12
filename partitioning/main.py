@@ -14,7 +14,7 @@ if __name__ == "__main__":
     b.setup()
     b.import_lgraph(custom_graph, custom_graph)
     
-    b.partition_lgraph()
+    b.partition_lgraph_louvain()
     b.G_to_disjoint()
     print(b.runScen2_3_1_rand())
 

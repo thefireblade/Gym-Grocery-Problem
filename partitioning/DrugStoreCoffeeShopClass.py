@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from collections import deque
 import numpy as np
 from sklearn.cluster import SpectralClustering
+import community as community_louvain
 import random
 import copy
 
@@ -120,7 +121,7 @@ class DrugStoreCoffeeShops():
         self.person_maps = person_maps
         self.imported = True
     
-    def partition_lgraph(self):
+    def partition_lgraph_spectral(self):
         if(self.G):
             orig_graph = self.G.__class__()
             orig_graph.add_nodes_from(self.G)
@@ -141,6 +142,20 @@ class DrugStoreCoffeeShops():
                 self.G.clear()
                 self.G.add_nodes_from(orig_graph)
                 self.G.add_edges_from(orig_graph.edges)
+
+    def partition_lgraph_louvain(self): 
+        if(self.G):
+            orig_graph = self.G.__class__()
+            orig_graph.add_nodes_from(self.G)
+            orig_graph.add_edges_from(self.G.edges)
+
+            partition = community_louvain.best_partition(self.G)
+            # Cluster
+            partition_list = [partition[i] for i in range(len(partition))]
+            partitioning_functions.finish_partition(self.G, partition_list)
+            illegal_people = partitioning_functions.invalid_nodes_dc_graph(self.G, self.n, len(self.C[0]))
+            if(illegal_people):
+                partitioning_functions.fix_graph(self.G, orig_graph, illegal_people)
 
     #Function used to parse a partitioned graph so that it can be computed with greedy.
     def G_to_disjoint(self):
