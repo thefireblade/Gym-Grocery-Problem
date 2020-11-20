@@ -13,17 +13,18 @@ import matplotlib.pyplot as plt
 test_graph = "./data/exports/text.gml"
 imported_graph = "./data/expandingCircle/random2_25_05_04_05_bgm.gml"
 original_graph = "./data/expandingCircle/random2_25_05_04_05.gml"
-export_filepath = './data/exports/random_400people_20gym_20store_5k_2.gml'
-n = 40 # number of people
-k = 4 # k random closest (For scenario 1)
-location_set = [20, 20] #Each item in this set represents the # of randomly generated locations for Coffee Shops, Drugstores, etc
+export_filepath = './data/exports/random_50people_10gym_15store_3k.gml'
+locations_filepath = './data/exports/random_50people_10gym_15store_3k.json'
+n = 50 # number of people
+k = 3 # k random closest (For scenario 1)
+location_set = [10, 15] #Each item in this set represents the # of randomly generated locations for Coffee Shops, Drugstores, etc
 
 
 ############################################# COMPONENTS ################################################
 S = [] #Set of people 
 #Set of sets of distinct locations that people go to (C = [grocery, gym, coffee,etc.]) **Contains A and B
 C = [] 
-## Adjacency Matrix ##
+## Adjacency Matrix ##n
 G = nx.Graph() #|C|-partite graph that contains the set locations 
 ## indices ###########################################
 # 0 -> |S| - 1 = people 
@@ -174,10 +175,10 @@ if __name__ == "__main__" :
     #Color Maps
     
     color_map = []
-    for node in range(140):
-        if node < 100:
+    for node in range(75):
+        if node < 50:
             color_map.append('green')
-        elif node < 120:
+        elif node < 60:
             color_map.append('blue')
         else: 
             color_map.append('red')     
@@ -185,13 +186,20 @@ if __name__ == "__main__" :
     #Test for Imports
     b = PlottedStoreShops(n, k, location_set)
     b.setup()
-    # b.export(export_filepath)
-    custom_graph = "./data/exports/random_50people_10gym_15store_3k_1.gml"
-    b.import_lgraph(custom_graph, custom_graph)
-    # b.runScen2_2Random()
-    print("the best result is {s}".format(s=b.iterateMe(b.runScen2_2Random.__name__, 3000)))
-    # nx.draw(b.gObj.graph, node_color = color_map)
+    # b.runScen2_3_1_rand()
+    # G = nx.Graph()
+    # G.add_nodes_from([i for i in range(10)])
+    # print(list(G.nodes[1]))
+    # b.export(export_filepath, locations_filepath)
+    custom_graph = "./data/exports/random_50people_10gym_15store_3k.gml"
+    # origLGraph = nx.read_gml(custom_graph) 
+    # nx.draw(origLGraph, node_color = color_map)
     # plt.show()
+    b.import_lgraph(custom_graph, custom_graph)
+    b.runScen2_3_1_rand()
+    # print("the best result is {s}".format(s=b.iterateMe(b.runScen2_3_1_rand.__name__, 100)))
+    nx.draw(b.gObj.graph, node_color = color_map)
+    plt.show()
     # print('Max Component size result:' + str(b.runScen2_3_1()))
     # b.getStats()
     # nx.draw(b.gObj.graph, node_color = color_map)

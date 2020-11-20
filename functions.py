@@ -174,8 +174,8 @@ def get_data():
 # Exports a JSON to results.json
 
 
-def export(data):
-    with open('results.json', 'w') as fp:
+def export(data, filename='results.json'):
+    with open(filename, 'w') as fp:
         json.dump(data, fp,  indent=4, sort_keys=True)
 
 ####### Main Functions ##########

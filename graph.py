@@ -20,7 +20,7 @@ class DisjointSetGraph():
         self.largestPeopleGroup = 0
 
     def initVertices(self):
-        self.graph.add_nodes_from([i for i in range(self.V)])
+        # self.graph.add_nodes_from([i for i in range(self.V)])
         self.nodes = [DisjointNode(0, i) for i in range(self.V)] 
 
     #Adds the vertices u and v to each edge set for the graph

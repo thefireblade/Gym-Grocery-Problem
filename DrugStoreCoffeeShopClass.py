@@ -17,6 +17,7 @@ location_names = ['gym', 'store', 'theater', 'home',
                 'base', 'club', 'school', 'hospital']
 people_type = 'people'
 default_data_name = './data/exports/text.gml'
+default_locations_name = './data/exports/text.gml'
 
 #####################################################################
 
@@ -113,7 +114,8 @@ class DrugStoreCoffeeShops():
         self.imported = True
     
     # Export a version of a graph in gml format with labels: "type": "people", and label == id + 1
-    def export(self, filename = default_data_name):
+    # Requires the graph to have locations attached
+    def export(self, filename = default_data_name, locationsFN = default_locations_name):
         graph_to_export = nx.Graph()
         # Add all people to the graph
         for person in range(self.n):
@@ -151,6 +153,13 @@ class DrugStoreCoffeeShops():
                 location_index += len(self.C[locations])
         graph_to_export = nx.relabel_nodes(graph_to_export, lambda x: x + 1)
         nx.write_gml(graph_to_export, filename)
+        location_data = {
+            'people': self.S,
+            'gyms': self.C[0],
+            'stores': self.C[1]
+        }
+        functions.export(location_data, locationsFN)
+
     # Required to run if the graph is not imported
     def setup(self):
         functions.initS(self.S, self.n)
@@ -647,10 +656,12 @@ class DrugStoreCoffeeShops():
     def iterateMe(self, function, iterations = 50):
         func = getattr(self, function)
         best = func()
+        self.saved_graph = self.gObj.graph
         for _ in range(iterations):
             new = func()
             if(best > new):
                 best = new
+                self.saved_graph = self.gObj.graph
             self.resetGraph()
         return best
 
