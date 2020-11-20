@@ -286,26 +286,37 @@ def customTest():
     results_total = 0
     tests = 2000
     total_time = 0
-
+    people = 5
+    stores = 10
+    gyms = 10
+    k = 3
+    name = "Spectral Partitioning with Graph Greedy"
     for i in range(tests):
         print("Commencing test {i}".format(i = i))
-        b = DrugStoreCoffeeShops(0, 0, [0,0])
+        b = DrugStoreCoffeeShops(people, k, [gyms, stores])
         b.setup()
-        b.import_lgraph(custom_graph, custom_graph)
         
         start_0 = time.perf_counter()
-        # b.partition_lgraph_louvain()
-        # b.G_to_disjoint()
-        results_total += b.runScen2_3_1_rand()
-        total_time += time.perf_counter() - start_0
+        b.partition_lgraph_spectral()
+        b.G_to_disjoint()
+        score = b.runScen2_3_1_rand()
+        results_total += score
 
+        time_spent = time.perf_counter() - start_0
+        total_time += time_spent
+        write("\nTest {i}: Finished {name}: {people} people, {gyms} gyms, {stores} stores, k = {k} in ".format(
+            i=i, k=k, stores=stores, name=name, gyms=gyms, people=people
+        ) + "{:e}(s)".format(time_spent),  "partition_test.txt")
+        if(time_spent > time_limit):
+            break
+        people *= 2
 
-    write("\n{func1} has an average largest people size of {numPeople}. \n".format( numPeople = (results_total / tests),
-        func1 = "Random Algorithm (Queue Greedy Algorithm)")
-        + "{funcFast} ran at an average time of ".format(funcFast = "Random Algorithm") 
-        + "{:e}".format(total_time/tests) + "(s)\n"
-        + "Constants : {n} People {l1} Gyms {l2} Stores; K closest match = {k}".format(
-        n=50, k=3, l1 = 10, l2 = 15), "partition_test.txt")
+    # write("\n{func1} has an average largest people size of {numPeople}. \n".format( numPeople = (results_total / tests),
+    #     func1 = "Louvain Partition")
+    #     + "{funcFast} ran at an average time of ".format(funcFast = "Random Algorithm") 
+    #     + "{:e}".format(total_time/tests) + "(s)\n"
+    #     + "Constants : {n} People {l1} Gyms {l2} Stores; K closest match = {k}".format(
+    #     n=50, k=3, l1 = 10, l2 = 15), "partition_test.txt")
 if __name__ == "__main__" :
     # #k doesnn't matter with scen2
 	# stressTestN(stressTestScen2_3_1, 5, [5, 5])

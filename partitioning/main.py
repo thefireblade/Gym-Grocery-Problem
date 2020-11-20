@@ -14,14 +14,14 @@ if __name__ == "__main__":
     b.setup()
     b.import_lgraph(custom_graph, custom_graph)
     
-    b.partition_lgraph_louvain()
+    b.partition_lgraph_spectral()
     b.G_to_disjoint()
     print(b.runScen2_3_1_rand())
 
-    c = PlottedStoreShops(4, 4, [5,5])
-    b.setup()
-    b.import_lgraph(custom_graph, custom_graph)
-    print(b.runScen2_3_1_rand())
+    # c = PlottedStoreShops(4, 4, [5,5])
+    # b.setup()
+    # b.import_lgraph(custom_graph, custom_graph)
+    # print(b.runScen2_3_1_rand())
 
     # pos = nx.spring_layout(b.G)
     # color_map = []

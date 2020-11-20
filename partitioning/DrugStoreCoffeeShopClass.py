@@ -249,10 +249,20 @@ class DrugStoreCoffeeShops():
         functions.initS(self.S, self.n)
         functions.genC(*self.location_set)
         self.C = functions.get_data()['C']
-        # functions.initG(self.S, self.C, self.G)
-        self.G = None
+        self.G = nx.Graph()
+        num_nodes = (sum([len(self.C[i]) for i in range(len(self.C))])) + len(self.S)
+        self.G.add_nodes_from([i for i in range(num_nodes)])
+        for i in range(len(self.S)):
+            locations_index = len(self.S)
+            for j in range(len(self.C)):    
+                k_closest = functions.get_k_closest(self.S[i], self.C[j], self.k)
+                k_closest_mapped = [i + locations_index for i in k_closest]
+                for k in k_closest_mapped:
+                    self.G.add_edge(i, k)
+                locations_index += len(self.C[j])
         self.imported = None
         self.k_closest = []
+    
     def importLocations(self):
         functions.initS(self.S, self.n)
 
