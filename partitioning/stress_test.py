@@ -1,6 +1,8 @@
 import time 
 import traceback
 from DrugStoreCoffeeShopClass import DrugStoreCoffeeShops
+from prettytable import PrettyTable
+
 time_limit = 200
 def writeResults(testNum, timeTaken, n, k, location_set, filename = "stressResults.txt"):
     f = open(filename, "a")
@@ -282,7 +284,6 @@ def compareAvgIterate(k, n_0 = 130, ls_0 = 20, ls_1 = 25, tests = 300, i = 50, f
         n=n_0, k=k, l1 = ls_0, l2 = ls_1), "unit_test_2_3.txt")
 
 def customTest():
-    custom_graph = "../data/exports/random_50people_10gym_15store_3k.gml"
     results_total = 0
     tests = 2000
     total_time = 0
