@@ -217,23 +217,23 @@ class DrugStoreCoffeeShops():
         for person in range(self.n):
             found_locations = [False for i in range(len(location_ranges))]
             # Check if graph connection exist between person
-            if(self.gObj):
-                neighbors = self.gObj.graph.neighbors(person)
-                if(len(self.gObj.graph.neighbors(person)) > 0):
-                    for neighbor in neighbors:
-                        for i in range(len(location_ranges)):
-                            if neighbor < location_ranges[i]:
-                                found_locations[i] = True
-                                break
-                        graph_to_export.add_edge(person, neighbor)
+            # if(self.gObj):
+            #     neighbors = self.gObj.graph.neighbors(person)
+            #     if(len(self.gObj.graph.neighbors(person)) > 0):
+            #         for neighbor in neighbors:
+            #             for i in range(len(location_ranges)):
+            #                 if neighbor < location_ranges[i]:
+            #                     found_locations[i] = True
+            #                     break
+            #             graph_to_export.add_edge(person, neighbor)
             location_index = self.n
             # Add all possible connections within k 
             for locations in range(len(self.C)):
-                if(not found_locations[locations]):
-                    k_closest = functions.get_k_closest(self.S[person], self.C[locations], self.k)
-                    k_closest_mapped = [i + location_index for i in k_closest]
-                    for location in k_closest_mapped:
-                        graph_to_export.add_edge(person, location)
+                # if(not found_locations[locations]):
+                k_closest = functions.get_k_closest(self.S[person], self.C[locations], self.k)
+                k_closest_mapped = [i + location_index for i in k_closest]
+                for location in k_closest_mapped:
+                    graph_to_export.add_edge(person, location)
                 location_index += len(self.C[locations])
         graph_to_export = nx.relabel_nodes(graph_to_export, lambda x: x + 1)
         nx.write_gml(graph_to_export, filename)
@@ -249,17 +249,17 @@ class DrugStoreCoffeeShops():
         functions.initS(self.S, self.n)
         functions.genC(*self.location_set)
         self.C = functions.get_data()['C']
-        self.G = nx.Graph()
-        num_nodes = (sum([len(self.C[i]) for i in range(len(self.C))])) + len(self.S)
-        self.G.add_nodes_from([i for i in range(num_nodes)])
-        for i in range(len(self.S)):
-            locations_index = len(self.S)
-            for j in range(len(self.C)):    
-                k_closest = functions.get_k_closest(self.S[i], self.C[j], self.k)
-                k_closest_mapped = [i + locations_index for i in k_closest]
-                for k in k_closest_mapped:
-                    self.G.add_edge(i, k)
-                locations_index += len(self.C[j])
+        # self.G = nx.Graph()
+        # num_nodes = (sum([len(self.C[i]) for i in range(len(self.C))])) + len(self.S)
+        # self.G.add_nodes_from([i for i in range(num_nodes)])
+        # for i in range(len(self.S)):
+        #     locations_index = len(self.S)
+        #     for j in range(len(self.C)):    
+        #         k_closest = functions.get_k_closest(self.S[i], self.C[j], self.k)
+        #         k_closest_mapped = [i + locations_index for i in k_closest]
+        #         for k in k_closest_mapped:
+        #             self.G.add_edge(i, k)
+        #         locations_index += len(self.C[j])
         self.imported = None
         self.k_closest = []
     
