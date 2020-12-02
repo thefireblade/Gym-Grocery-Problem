@@ -12,10 +12,10 @@ import time
 def findMethod(gObj, func):
     try:
         func = getattr(gObj, func)
-        return func()
+        # return func()
     except AttributeError:
         print("{func} not found".format(func = func))
-    return -1
+    # return -1
 
 if __name__ == "__main__":
     people = 100
@@ -26,8 +26,7 @@ if __name__ == "__main__":
     # Construct graph
     b = PlottedStoreShops(0, 0, [0, 0])
     #Test graph
-    function_names = [b.runScen2Random.__name__, b.runScen2_3Random.__name__, 
-                    b.runScen2_3_1_rand.__name__, b.runScen2_2Random.__name__]
+    function_names = [b.partition_lgraph_louvain.__name__, b.partition_lgraph_spectral.__name__]
     for b in range(1,6):
         path = "./graph_files/bench{b}/".format(b=b)
         custom_graph = "{path}test_graph_n={people}_k={k}_stores={stores}_gyms={gyms}.gml".format(
@@ -36,9 +35,9 @@ if __name__ == "__main__":
         data_path = "{path}location_data_n={people}_k={k}_stores={stores}_gyms={gyms}.json".format(
             path=path, people=people, gyms=gyms, stores=stores, k=k
         )
-        b = PlottedStoreShops(people, k, [gyms, stores])
-        b.setup()
-        b.export(custom_graph, data_path)
+        # b = PlottedStoreShops(people, k, [gyms, stores])
+        # b.setup()
+        # b.export(custom_graph, data_path)
         for function_name in function_names:
             timing_results = []
             component_results = []
@@ -55,7 +54,9 @@ if __name__ == "__main__":
                 c = PlottedStoreShops(0, 0, [0, 0])
                 c.import_lgraph(custom_graph, custom_graph)
                 start_time = time.perf_counter()
-                result = findMethod(c, function_name)
+                findMethod(c, function_name)
+                c.G_to_disjoint()
+                result = c.runScen2_3_1_rand()
                 end_time = time.perf_counter() - start_time
                 del c
                 if(result == -1):
