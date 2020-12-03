@@ -26,8 +26,8 @@ if __name__ == "__main__":
     # Construct graph
     b = PlottedStoreShops(0, 0, [0, 0])
     #Test graph
-    function_names = [b.partition_lgraph_louvain.__name__, b.partition_lgraph_spectral.__name__]
-    for b in range(1,6):
+    function_names = [b.partition_lgraph_spectral.__name__]
+    for b in range(1,2):
         path = "./graph_files/bench{b}/".format(b=b)
         custom_graph = "{path}test_graph_n={people}_k={k}_stores={stores}_gyms={gyms}.gml".format(
             path=path, people=people, gyms=gyms, stores=stores, k=k
