@@ -12,10 +12,10 @@ import time
 def findMethod(gObj, func):
     try:
         func = getattr(gObj, func)
-        # return func()
+        func()
     except AttributeError:
         print("{func} not found".format(func = func))
-    # return -1
+    return -1
 
 if __name__ == "__main__":
     people = 100
