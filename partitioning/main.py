@@ -12,22 +12,22 @@ import time
 def findMethod(gObj, func):
     try:
         func = getattr(gObj, func)
-        func()
+        return func()
     except AttributeError:
         print("{func} not found".format(func = func))
     return -1
 
 if __name__ == "__main__":
-    people = 100
-    gyms = 20
-    stores = 20
+    people = 200
+    gyms = 40
+    stores = 40
     k = 3
     test = 200 # number of test
     # Construct graph
     b = PlottedStoreShops(0, 0, [0, 0])
     #Test graph
-    function_names = [b.partition_lgraph_spectral.__name__]
-    for b in range(1,2):
+    function_names = [b.partition_lgraph_spectral.__name__, b.partition_lgraph_louvain.__name__]
+    for b in range(2,6):
         path = "./graph_files/bench{b}/".format(b=b)
         custom_graph = "{path}test_graph_n={people}_k={k}_stores={stores}_gyms={gyms}.gml".format(
             path=path, people=people, gyms=gyms, stores=stores, k=k
@@ -35,9 +35,9 @@ if __name__ == "__main__":
         data_path = "{path}location_data_n={people}_k={k}_stores={stores}_gyms={gyms}.json".format(
             path=path, people=people, gyms=gyms, stores=stores, k=k
         )
-        # b = PlottedStoreShops(people, k, [gyms, stores])
-        # b.setup()
-        # b.export(custom_graph, data_path)
+        b = PlottedStoreShops(people, k, [gyms, stores])
+        b.setup()
+        b.export(custom_graph, data_path)
         for function_name in function_names:
             timing_results = []
             component_results = []
@@ -73,6 +73,8 @@ if __name__ == "__main__":
                 for i in range(passed):
                     writer.writerow([timing_results[i], component_results[i]])
         people *= 2
+        stores *= 2
+        gyms *=2
     # b.partition_lgraph_spectral()
     # b.G_to_disjoint()
     # print(b.runScen2_3_1_rand())
