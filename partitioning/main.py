@@ -26,7 +26,8 @@ if __name__ == "__main__":
     # Construct graph
     b = PlottedStoreShops(0, 0, [0, 0])
     #Test graph
-    function_names = [b.partition_lgraph_spectral.__name__, b.partition_lgraph_louvain.__name__]
+    function_names = [b.runScen3Random.__name__]
+     #b.partition_lgraph_spectral.__name__, b.partition_lgraph_louvain.__name__]
     for b in range(2,6):
         path = "./graph_files/bench{b}/".format(b=b)
         custom_graph = "{path}test_graph_n={people}_k={k}_stores={stores}_gyms={gyms}.gml".format(
@@ -35,9 +36,9 @@ if __name__ == "__main__":
         data_path = "{path}location_data_n={people}_k={k}_stores={stores}_gyms={gyms}.json".format(
             path=path, people=people, gyms=gyms, stores=stores, k=k
         )
-        b = PlottedStoreShops(people, k, [gyms, stores])
-        b.setup()
-        b.export(custom_graph, data_path)
+        # b = PlottedStoreShops(people, k, [gyms, stores])
+        # b.setup()
+        # b.export(custom_graph, data_path)
         for function_name in function_names:
             timing_results = []
             component_results = []
@@ -54,9 +55,10 @@ if __name__ == "__main__":
                 c = PlottedStoreShops(0, 0, [0, 0])
                 c.import_lgraph(custom_graph, custom_graph)
                 start_time = time.perf_counter()
-                findMethod(c, function_name)
-                c.G_to_disjoint()
-                result = c.runScen2_3_1_rand()
+                result = findMethod(c, function_name)
+                # findMethod(c, function_name)
+                # c.G_to_disjoint()
+                # result = c.runScen3_1_rand()
                 end_time = time.perf_counter() - start_time
                 del c
                 if(result == -1):

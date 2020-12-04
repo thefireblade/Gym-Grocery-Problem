@@ -403,7 +403,7 @@ class DrugStoreCoffeeShops():
 
     # Contraints : There must be at least one shop of any type
     # Perform a search on people and compare the 
-    def runScen2_3(self):
+    def runScen3(self):
         # Graph Object initialization
         vertices = len(self.S) + sum([len(i) for i in self.C])
         if not self.imported:
@@ -491,7 +491,7 @@ class DrugStoreCoffeeShops():
 
     # Contraints : There must be at least one shop of any type
     # Perform a search on people and compare the 
-    def runScen2_3Random(self):
+    def runScen3Random(self):
         # Graph Object initialization
         vertices = len(self.S) + sum([len(i) for i in self.C])
         if not self.gObj:
@@ -577,7 +577,7 @@ class DrugStoreCoffeeShops():
         self.data['Scenario_2_3'] = stats
         return stats['max_connected_component_size']
 
-    def runScen2_3_1(self):
+    def runScen3_1(self):
         # Graph Object initialization
         vertices = self.n + sum([len(i) for i in self.C])
         if self.vertices:
@@ -648,7 +648,7 @@ class DrugStoreCoffeeShops():
         self.data['Scenario_2_3_1'] = stats
         return stats['max_connected_component_size']
 
-    def runScen2_3_1_rand(self):
+    def runScen3_1_rand(self):
         # Graph Object initialization
         vertices = self.n + sum([len(i) for i in self.C])
         if self.vertices:
