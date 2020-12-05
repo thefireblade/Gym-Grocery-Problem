@@ -18,9 +18,9 @@ def findMethod(gObj, func):
     return -1
 
 if __name__ == "__main__":
-    people = 200
-    gyms = 40
-    stores = 40
+    people = 1600
+    gyms = 20
+    stores = 20
     k = 3
     test = 200 # number of test
     # Construct graph
@@ -28,7 +28,7 @@ if __name__ == "__main__":
     #Test graph
     function_names = [b.runScen3Random.__name__]
      #b.partition_lgraph_spectral.__name__, b.partition_lgraph_louvain.__name__]
-    for b in range(2,6):
+    for b in range(5,6):
         path = "./graph_files/bench{b}/".format(b=b)
         custom_graph = "{path}test_graph_n={people}_k={k}_stores={stores}_gyms={gyms}.gml".format(
             path=path, people=people, gyms=gyms, stores=stores, k=k
