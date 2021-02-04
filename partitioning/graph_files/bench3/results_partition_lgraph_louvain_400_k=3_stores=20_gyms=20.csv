@@ -1,4 +1,4 @@
-Max Component Sizes,Compute Time (s),partition_lgraph_louvain,,Average Compute Size,Average Compute Time (s)
+Compute Time (s),Max Component Size,partition_lgraph_louvain,,Average Compute Size,Average Compute Time (s)
 0.4811846,334,,,155.85,0.504246105
 0.4842737,79,,,,
 0.5066614,128,,,,

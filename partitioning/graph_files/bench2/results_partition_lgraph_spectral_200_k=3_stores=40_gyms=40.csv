@@ -1,4 +1,4 @@
-Max Component Sizes,Compute Time (s),partition_lgraph_spectral,,Average Compute Time (s),Average Comp. Size
+Compute Time (s),Max Component Size,partition_lgraph_spectral,,Average Compute Time (s),Average Comp. Size
 0.691794,131,,,0.658423704,99.395
 0.7155473,135,,,,
 0.7436632,65,,,,

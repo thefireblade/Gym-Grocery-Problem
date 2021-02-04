@@ -13,6 +13,7 @@ from sklearn.cluster import SpectralClustering
 import community as community_louvain
 import random
 import copy
+from scipy.optimize import dual_annealing
 
 ########################### Constants ###############################
 
@@ -40,6 +41,7 @@ class DrugStoreCoffeeShops():
         self.imported = False
         self.vertices = None
         self.k_closest = [] #List of maps
+        self.edges = False
 
     # When importing the based on a networkx model for the line graph (ONLY WORKS WITH SHOP AND GYM TYPES)
     # 'type' of a node can be 'person', 'gym', or 'store'
@@ -66,6 +68,7 @@ class DrugStoreCoffeeShops():
         self.n = people_count
         self.S = [0 for i in range(people_count)]
         self.C = [[0 for i in range(gym_count)],[0 for i in range(store_count)]]
+        self.location_set = [gym_count, store_count]
         self.vertices = node_count
         person_maps = []
         # Initialize the graph object
@@ -76,6 +79,7 @@ class DrugStoreCoffeeShops():
         self.k_closest.append({})
         self.G = nx.Graph()
         self.G.add_nodes_from([i for i in range(people_count + gym_count + store_count)])
+        self.edges = []
         for index in currLGraph.nodes:
             node_type = currLGraph.nodes[index]['type']
             # Case for person
@@ -85,6 +89,7 @@ class DrugStoreCoffeeShops():
                 # Separate the 2 types from neighbors
                 for neighbor_index in currLGraph.neighbors(index):
                     self.G.add_edge(int(index) - 1, int(neighbor_index) - 1)
+                    self.edges.append((int(index) - 1, int(neighbor_index) - 1))
                     if currLGraph.nodes[neighbor_index]['type'] == "gym":
                         gyms.append(int(neighbor_index) - 1)
                     else:
@@ -156,6 +161,51 @@ class DrugStoreCoffeeShops():
             illegal_people = partitioning_functions.invalid_nodes_dc_graph(self.G, self.n, len(self.C[0]))
             if(illegal_people):
                 partitioning_functions.fix_graph(self.G, orig_graph, illegal_people)
+    #Required for the annealing function
+    def setup_edges(self):
+        if(self.edges):
+            print(self.edges)
+            
+
+    #Function performs simulated Annealing to solve the problem
+    def anneal(self):
+        if(self.edges == None):
+            return -1
+        lw = [0] * len(self.edges)
+        up = [1] * len(self.edges)
+        people = self.n
+        vertices = people + sum(self.location_set)
+
+        #Function that defines how annealing will be graded.
+        def anneal_function(x):
+            graph = GymGroceryGraph(vertices, people)
+            graph.initVertices()
+            for packet in zip(x, self.edges):
+                val = packet[0]
+                edge = packet[1]
+                # print("{e1} and {e2}".format(e1 = edge[0], e2 = edge[1]))
+                if(val >= 0.5):
+                    graph.union(edge[0], edge[1])
+            return graph.largestPeopleGroup
+
+        ret = dual_annealing(anneal_function, bounds=list(zip(lw, up)))
+        print(ret)
+        self.gObj = GymGroceryGraph(vertices, people)
+        self.gObj.initVertices()
+        for packet in zip(ret.x, self.edges):
+            val = packet[0]
+            edge = packet[1]
+            if(val >= 0.5):
+                self.gObj.union(edge[0], edge[1])
+                self.gObj.addEdge(edge[0], edge[1])
+                
+        stats = functions.gen_stats_nx(self.gObj.graph)
+        stats['num_ppl'] = self.n
+        stats['num_coffeeshops'] = self.location_set[0]
+        stats['num_drugstores'] = self.location_set[1]
+        self.data['Scenario_4'] = stats
+        return self.gObj.largestPeopleGroup
+        
 
     #Function used to parse a partitioned graph so that it can be computed with greedy.
     def G_to_disjoint(self):
@@ -314,7 +364,7 @@ class DrugStoreCoffeeShops():
         stats['num_drugstores'] = len(self.C[1])
         stats['max_connected_component_size'] = self.gObj.largestPeopleGroup
         self.data['Scenario_2'] = stats
-        return stats['max_connected_component_size']
+        return self.gObj.largestPeopleGroup
 
     def runScen2Random(self):
         vertices = len(self.S) + sum([len(i) for i in self.C])
@@ -343,7 +393,7 @@ class DrugStoreCoffeeShops():
         stats['num_drugstores'] = len(self.C[1])
         stats['max_connected_component_size'] = self.gObj.largestPeopleGroup
         self.data['Scenario_2'] = stats
-        return stats['max_connected_component_size']
+        return self.gObj.largestPeopleGroup
 
     def runScen2_2(self):
         vertices = len(self.S) + sum([len(i) for i in self.C])
@@ -371,7 +421,7 @@ class DrugStoreCoffeeShops():
         stats['num_drugstores'] = len(self.C[1])
         stats['max_connected_component_size'] = self.gObj.largestPeopleGroup
         self.data['Scenario_2_2'] = stats
-        return stats['max_connected_component_size']
+        return self.gObj.largestPeopleGroup
 
     def runScen2_2Random(self):
         vertices = len(self.S) + sum([len(i) for i in self.C])
@@ -399,7 +449,7 @@ class DrugStoreCoffeeShops():
         stats['num_drugstores'] = len(self.C[1])
         stats['max_connected_component_size'] = self.gObj.largestPeopleGroup
         self.data['Scenario_2_2'] = stats
-        return stats['max_connected_component_size']
+        return self.gObj.largestPeopleGroup
 
     # Contraints : There must be at least one shop of any type
     # Perform a search on people and compare the 
@@ -487,7 +537,7 @@ class DrugStoreCoffeeShops():
         stats['people_in_connected_components'] = self.gObj.getPeopleInComponents()
         stats['max_connected_component_size'] = self.gObj.largestPeopleGroup
         self.data['Scenario_2_3'] = stats
-        return stats['max_connected_component_size']
+        return self.gObj.largestPeopleGroup
 
     # Contraints : There must be at least one shop of any type
     # Perform a search on people and compare the 
@@ -575,7 +625,7 @@ class DrugStoreCoffeeShops():
         stats['people_in_connected_components'] = self.gObj.getPeopleInComponents()
         stats['max_connected_component_size'] = self.gObj.largestPeopleGroup
         self.data['Scenario_2_3'] = stats
-        return stats['max_connected_component_size']
+        return self.gObj.largestPeopleGroup
 
     def runScen3_1(self):
         # Graph Object initialization
@@ -646,7 +696,7 @@ class DrugStoreCoffeeShops():
         stats['people_in_connected_components'] = self.gObj.getPeopleInComponents()
         stats['max_connected_component_size'] = self.gObj.largestPeopleGroup
         self.data['Scenario_2_3_1'] = stats
-        return stats['max_connected_component_size']
+        return self.gObj.largestPeopleGroup
 
     def runScen3_1_rand(self):
         # Graph Object initialization
@@ -746,7 +796,7 @@ class DrugStoreCoffeeShops():
         stats['people_in_connected_components'] = self.gObj.getPeopleInComponents()
         stats['max_connected_component_size'] = self.gObj.largestPeopleGroup
         self.data['Scenario_2_3_1'] = stats
-        return stats['max_connected_component_size']
+        return self.gObj.largestPeopleGroup
 
     def iterateMe(self, function, iterations = 50):
         func = getattr(self, function)
