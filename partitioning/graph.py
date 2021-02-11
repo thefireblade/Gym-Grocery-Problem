@@ -19,8 +19,9 @@ class DisjointSetGraph():
         self.nodes = [] # List of DisjointNodes
         self.largestPeopleGroup = 0
 
-    def initVertices(self):
-        # self.graph.add_nodes_from([i for i in range(self.V)])
+    def initVertices(self, graph = True):
+        if(graph):
+            self.graph.add_nodes_from([i for i in range(self.V)])
         self.nodes = [DisjointNode(0, i) for i in range(self.V)] 
 
     #Adds the vertices u and v to each edge set for the graph
@@ -117,8 +118,9 @@ class GymGroceryGraph(DisjointSetGraph):
         self.numPeople = numPeople
 
     # Initializes the graph except all people nodes have a component size of 1
-    def initVertices(self):
-        self.graph.add_nodes_from([i for i in range(self.V)])
+    def initVertices(self, graph=True):
+        if(graph):
+            self.graph.add_nodes_from([i for i in range(self.V)])
         self.nodes = [DisjointNode(0, i, 1) for i in range(self.numPeople)]  #People count as 1 component
         self.nodes.extend([DisjointNode(0, i) for i in range(self.numPeople, self.V)]) # Shops
     

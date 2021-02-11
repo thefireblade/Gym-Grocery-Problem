@@ -85,29 +85,29 @@ if __name__ == "__main__":
     # b.setup()
     # b.import_lgraph(custom_graph, custom_graph)
     # print(b.runScen2_3_1_rand())
-    path = "./graph_files/bench2/"
+    # path = "./graph_files/bench2/"
     # pos = nx.spring_layout(b.G)
-    custom_graph = "{path}test_graph_n=200_k=3_stores=40_gyms=40.gml".format(path=path)
-    color_map = []
-    for node in range(280):
-        if node < 200:
-            color_map.append('green')
-        elif node < 240:
-            color_map.append('blue')
-        else: 
-            color_map.append('red')    
+    # custom_graph = "{path}test_graph_n=200_k=3_stores=40_gyms=40.gml".format(path=path)
+    # color_map = []
+    # for node in range(280):
+    #     if node < 200:
+    #         color_map.append('green')
+    #     elif node < 240:
+    #         color_map.append('blue')
+    #     else: 
+    #         color_map.append('red')    
 
     
     # nx.draw_networkx_nodes(b.gObj.graph, pos, node_color=color_map)
     # nx.draw_networkx_edges(b.gObj.graph, pos, alpha=0.75)
     # c = nx.read_gml(custom_graph)
-    c = PlottedStoreShops(0, 0, [0,0])
-    c.import_lgraph(custom_graph, custom_graph)
-    c.partition_lgraph_louvain()
-    c.G_to_disjoint()
-    print('Max Component size result:' + str(c.runScen3_1_rand()))
-    nx.draw(c.gObj.graph, node_color = color_map)
-    plt.show()
+    # c = PlottedStoreShops(0, 0, [0,0])
+    # c.import_lgraph(custom_graph, custom_graph)
+    # c.partition_lgraph_louvain()
+    # c.G_to_disjoint()
+    # print('Max Component size result:' + str(c.runScen3_1_rand()))
+    # nx.draw(c.gObj.graph, node_color = color_map)
+    # plt.show()
 
     # compute the best partition
     # import community as community_louvain
@@ -127,3 +127,19 @@ if __name__ == "__main__":
     #                     cmap=cmap, node_color=list(partition.values()))
     # nx.draw_networkx_edges(G, pos, alpha=0.5)
     # plt.show()
+
+    ######################################### GENERATE GRAPH CODE ############################################
+    k = 2
+    path = "./graph_files/bench{b}/".format(b=0)
+    people = 40
+    stores = 4
+    gyms = 4
+    custom_graph = "{path}test_graph_n={people}_k={k}_stores={stores}_gyms={gyms}.gml".format(
+        path=path, people=people, gyms=gyms, stores=stores, k=k
+    )
+    data_path = "{path}location_data_n={people}_k={k}_stores={stores}_gyms={gyms}.json".format(
+        path=path, people=people, gyms=gyms, stores=stores, k=k
+    )
+    b = PlottedStoreShops(people, k, [gyms, stores])
+    b.setup()
+    b.export(custom_graph, data_path)

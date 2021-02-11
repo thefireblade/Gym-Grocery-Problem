@@ -14,6 +14,7 @@ import community as community_louvain
 import random
 import copy
 from scipy.optimize import dual_annealing
+import math
 
 ########################### Constants ###############################
 
@@ -79,7 +80,6 @@ class DrugStoreCoffeeShops():
         self.k_closest.append({})
         self.G = nx.Graph()
         self.G.add_nodes_from([i for i in range(people_count + gym_count + store_count)])
-        self.edges = []
         for index in currLGraph.nodes:
             node_type = currLGraph.nodes[index]['type']
             # Case for person
@@ -89,7 +89,6 @@ class DrugStoreCoffeeShops():
                 # Separate the 2 types from neighbors
                 for neighbor_index in currLGraph.neighbors(index):
                     self.G.add_edge(int(index) - 1, int(neighbor_index) - 1)
-                    self.edges.append((int(index) - 1, int(neighbor_index) - 1))
                     if currLGraph.nodes[neighbor_index]['type'] == "gym":
                         gyms.append(int(neighbor_index) - 1)
                     else:
@@ -123,6 +122,7 @@ class DrugStoreCoffeeShops():
                         'person': int(index) - 1
                     })            
                     self.k_closest[1][int(index) - 1] = stores
+        self.edges = self.G.edges()
         self.person_maps = person_maps
         self.imported = True
     
@@ -162,13 +162,30 @@ class DrugStoreCoffeeShops():
             if(illegal_people):
                 partitioning_functions.fix_graph(self.G, orig_graph, illegal_people)
     #Required for the annealing function
+    #Needs to be implemented
     def setup_edges(self):
         if(self.edges):
             print(self.edges)
-            
-
+        # else:
+        #     if(self.gObj):
+        #         self.edges = self.gObj.edges
+    #Function that will return the list of edges that are connected or not in the current graph
+    def get_state(self):
+        if(self.gObj):
+            if(self.edges):
+                state = []
+                current_edges = list(self.gObj.graph.edges())
+                for edge in self.edges:
+                    try:
+                        current_edges.index(edge)
+                        state.append(1)
+                    except ValueError:
+                        index_value = -1
+                        state.append(0)
+                return state
+        return None
     #Function performs simulated Annealing to solve the problem
-    def anneal(self):
+    def anneal(self, initial_state = None):
         if(self.edges == None):
             return -1
         lw = [0] * len(self.edges)
@@ -186,9 +203,11 @@ class DrugStoreCoffeeShops():
                 # print("{e1} and {e2}".format(e1 = edge[0], e2 = edge[1]))
                 if(val >= 0.5):
                     graph.union(edge[0], edge[1])
-            return graph.largestPeopleGroup
+                    graph.addEdge(edge[0], edge[1])
+            valid = partitioning_functions.valid_dc_graph(graph.graph, people, self.location_set[0])
+            return graph.largestPeopleGroup if valid else people
 
-        ret = dual_annealing(anneal_function, bounds=list(zip(lw, up)))
+        ret = dual_annealing(anneal_function, bounds=list(zip(lw, up)), x0=initial_state)
         print(ret)
         self.gObj = GymGroceryGraph(vertices, people)
         self.gObj.initVertices()
@@ -714,7 +733,6 @@ class DrugStoreCoffeeShops():
         #init the first row for the list_queue, runs in O(n*k*|m|) or O(V) if imported L graph
         list_queue = [deque() for i in range(vertices)]
         if self.person_maps:
-            random.shuffle(self.person_maps)
             list_queue[0].extendleft(self.person_maps)
         else:
             person_maps = []
@@ -731,9 +749,9 @@ class DrugStoreCoffeeShops():
                     person_maps.append(person_map)
                     list_queue[0].append(person_map)
                     locations_index += len(self.C[locations])
-            random.shuffle(person_maps)
             list_queue[0].extendleft(person_maps)
-
+        random.shuffle(list_queue[0])
+        print(len(list_queue[0]))
         for i in range(len(list_queue)):
             goal = i + 1
             stack = list_queue[i]
@@ -747,13 +765,14 @@ class DrugStoreCoffeeShops():
                 goal_found = False
                 goal_index = 0
                 # Check the returned component sizes (in our case, people) to see if it matches the current goal O(k)
-                shoplist_component_sizes = []
+                shoplist_component_sizes = deque()
                 for shop in shoplist:
                     size = self.gObj.testUnionLargestComp(person, shop)
                     # check if the resulting component size is equal to the goal
                     if(size == goal):
                         goal_found = True
-                        ties_list.append(person_map)
+                        self.gObj.union(person, shop)
+                        self.gObj.addEdge(person, shop)
                         break
                     shoplist_component_sizes.append(size)
                     goal_index += 1
@@ -763,31 +782,31 @@ class DrugStoreCoffeeShops():
                     min_size = min(shoplist_component_sizes) - 1 # -1 since the goal is always index + 1
                     list_queue[min_size].append(person_map)
         ########################### RANDOM PART OF THIS ALGORITHM ################################            
-                #RANDOMLY CHOOSE A TIE HERE AND RESHUFFLE THE REST BACK INTO THE STACK
-                if(not stack and ties_list):
-                    # print("Number of ties {num}".format(num= len(ties_list)))
-                    # Get random index for ties list
-                    random_selection = np.random.randint(len(ties_list))
-                    # Extract the person map from ties_list
-                    person_map = ties_list[random_selection]
-                    ties_list.remove(person_map)
-                    shops_ties = []
-                    # Search through for the best goal for this person
-                    person = person_map['person']
-                    shoplist = person_map['shoplist']
-                    goal_index = 0
-                    for shop in shoplist:
-                        size = self.gObj.testUnionLargestComp(person, shop)
-                        # check if the resulting component size is equal to the goal
-                        if(size == goal):
-                            shops_ties.append(goal_index)
-                        goal_index += 1
+                # #RANDOMLY CHOOSE A TIE HERE AND RESHUFFLE THE REST BACK INTO THE STACK
+                # if(not stack and ties_list):
+                #     # print("Number of ties {num}".format(num= len(ties_list)))
+                #     # Get random index for ties list
+                #     random_selection = np.random.randint(len(ties_list))
+                #     # Extract the person map from ties_list
+                #     person_map = ties_list[random_selection]
+                #     ties_list.remove(person_map)
+                #     shops_ties = []
+                #     # Search through for the best goal for this person
+                #     person = person_map['person']
+                #     shoplist = person_map['shoplist']
+                #     goal_index = 0
+                #     for shop in shoplist:
+                #         size = self.gObj.testUnionLargestComp(person, shop)
+                #         # check if the resulting component size is equal to the goal
+                #         if(size == goal):
+                #             # shops_ties.append(goal_index)
+                #         goal_index += 1
                     # Make connection and put back the remaining on the stack to reiterate
-                    random_selection = np.random.randint(len(shops_ties))
-                    self.gObj.union(person, shoplist[shops_ties[random_selection]])
-                    self.gObj.addEdge(person, shoplist[shops_ties[random_selection]])
-                    stack.extendleft(ties_list)
-                    ties_list = []
+                    # random_selection = np.random.randint(len(shops_ties))
+                    # self.gObj.union(person, shoplist[shops_ties[random_selection]])
+                    # self.gObj.addEdge(person, shoplist[shops_ties[random_selection]])
+                    # stack.extendleft(ties_list)
+                    # ties_list = []
         stats = functions.gen_stats_nx(self.gObj.graph)
         stats['num_ppl'] = self.n
         if len(self.C) >= 2:
@@ -798,7 +817,7 @@ class DrugStoreCoffeeShops():
         self.data['Scenario_2_3_1'] = stats
         return self.gObj.largestPeopleGroup
 
-    def iterateMe(self, function, iterations = 50):
+    def iterate(self, function, iterations = 50):
         func = getattr(self, function)
         best = func()
         self.saved_graph = self.gObj.graph
@@ -814,58 +833,95 @@ class DrugStoreCoffeeShops():
         print(self.data)
         functions.export(self.data)
 
-    #Helper function for backtracking
-    def exhaustive_helper(self, size, i, j, l1): 
-        if(i == self.n):
-            # print("###############       The size (-1) is now " + str(size) + "     ##############")
-            return size
-        if(j == len(self.C)):
-            return -1
-        high = -1
-        for l in range(l1, len(self.C[j])):    
-            locations_index = self.n + (sum([len(self.C[i]) for i in range(j)])) + l
-            # print("Adding edge between " + str(i) + " and " + str(locations_index))
-            self.exhaustG.addEdge(i, locations_index)
-            self.exhaustG.union(i, locations_index)
-            max_size = -1
-            if(j + 1 == len(self.C)):
-                max_size = self.exhaustive_helper(self.exhaustG.largestPeopleGroup, i + 1, 0, l)
-            else:
-                max_size = self.exhaustive_helper(self.exhaustG.largestPeopleGroup, i, j + 1, l)
-            if((max_size < high or high < 0) and max_size > 0):
-                high = max_size
-            #Backtrack
-            self.exhaustG.removeEdge(i, locations_index)
-            self.exhaustG.undoUnion()
-            # print("Removing edge between " + str(i) + " and " + str(locations_index))
-        # print("###############       The high is now " + str(high) + "     ##############")    
-        return high
+    # #Helper function for backtracking 
+    # def exhaustive_helper(self, size, i, j, l1): 
+    #     if(i == self.n):
+    #         # print("###############       The size (-1) is now " + str(size) + "     ##############")
+    #         return size
+    #     if(j == len(self.C)):
+    #         return -1
+    #     high = -1
+    #     for l in range(l1, len(self.C[j])):    
+    #         locations_index = self.n + (sum([len(self.C[i]) for i in range(j)])) + l
+    #         # print("Adding edge between " + str(i) + " and " + str(locations_index))
+    #         self.exhaustG.addEdge(i, locations_index)
+    #         self.exhaustG.union(i, locations_index)
+    #         max_size = -1
+    #         if(j + 1 == len(self.C)):
+    #             max_size = self.exhaustive_helper(self.exhaustG.largestPeopleGroup, i + 1, 0, l)
+    #         else:
+    #             max_size = self.exhaustive_helper(self.exhaustG.largestPeopleGroup, i, j + 1, l)
+    #         if((max_size < high or high < 0) and max_size > 0):
+    #             high = max_size
+    #         #Backtrack
+    #         self.exhaustG.removeEdge(i, locations_index)
+    #         self.exhaustG.undoUnion()
+    #         # print("Removing edge between " + str(i) + " and " + str(locations_index))
+    #     # print("###############       The high is now " + str(high) + "     ##############")    
+    #     return high
 
-    #Backtracking function
-    def exhaustive(self):
-        vertices = self.n + sum([len(i) for i in self.C])
-        self.exhaustG = UndoGymGroceryGraph(vertices, self.n) # Graph Object
-        self.exhaustG.initVertices()
-        max_size = -1
-        i,j = 0,0
-        for l in range(len(self.C[0])):
-            print("{p}/{t} complete".format(p=l, t = len(self.C[0])))
-            locations_index = self.n + l
-            self.exhaustG.addEdge(i, locations_index)
-            self.exhaustG.union(i, locations_index)
-            # print("Adding edge between " + str(i) + " and " + str(locations_index))
-            size = -1
-            if(1 == len(self.C)):
-                size = self.exhaustive_helper(self.exhaustG.largestPeopleGroup, i + 1, 0, l)
-            else:
-                size = self.exhaustive_helper(self.exhaustG.largestPeopleGroup, i, j + 1, l)
-            if(max_size < 0 or max_size > size and size > 0):
-                max_size = size
-            #Backtrack
-            self.exhaustG.removeEdge(0, locations_index)
-            self.exhaustG.undoUnion()
-            # print("Removing edge between " + str(i) + " and " + str(locations_index))
-        return max_size
+    # #Backtracking function
+    # def exhaustive(self):
+    #     vertices = self.n + sum([len(i) for i in self.C])
+    #     self.exhaustG = UndoGymGroceryGraph(vertices, self.n) # Graph Object
+    #     self.exhaustG.initVertices()
+    #     max_size = -1
+    #     i,j = 0,0
+    #     for l in range(len(self.C[0])):
+    #         print("{p}/{t} complete".format(p=l, t = len(self.C[0])))
+    #         locations_index = self.n + l
+    #         self.exhaustG.addEdge(i, locations_index)
+    #         self.exhaustG.union(i, locations_index)
+    #         # print("Adding edge between " + str(i) + " and " + str(locations_index))
+    #         size = -1
+    #         if(1 == len(self.C)):
+    #             size = self.exhaustive_helper(self.exhaustG.largestPeopleGroup, i + 1, 0, l)
+    #         else:
+    #             size = self.exhaustive_helper(self.exhaustG.largestPeopleGroup, i, j + 1, l)
+    #         if(max_size < 0 or max_size > size and size > 0):
+    #             max_size = size
+    #         #Backtrack
+    #         self.exhaustG.removeEdge(0, locations_index)
+    #         self.exhaustG.undoUnion()
+    #         # print("Removing edge between " + str(i) + " and " + str(locations_index))
+    #     return max_size
+
+    def run_brute_force(self):
+        if not self.person_maps:
+            self.person_maps = []
+            for person in range(len(self.S)):
+                locations_index = len(self.S)
+                for locations in range(len(self.C)):
+                    k_closest = functions.get_k_closest(self.S[person], self.C[locations], self.k)
+                    mapped_shoplist = [k_closest[i] + locations_index for i in range(len(k_closest))]
+                    person_map = {
+                        'shoplist': mapped_shoplist,
+                        'person': person
+                    }
+                    # Add the valid list of shops - person combos to the first stack
+                    self.person_maps.append(person_map)
+                    locations_index += len(self.C[locations])
+        people = self.n
+        vertices = people + sum(self.location_set)
+        best_score = people
+        iterations  = int(math.pow(self.k, len(self.person_maps)))
+        max_padding = len(self.person_maps)
+        print(iterations)
+        for i in range(iterations):
+            converted = np.base_repr(i, base=self.k)
+            converted = converted.zfill(max_padding)
+
+            graph = GymGroceryGraph(vertices, people)
+            graph.initVertices(graph = False)
+            for j in range(len(converted)):
+                activity = self.person_maps[j]['shoplist'][int(converted[j])]
+                person = self.person_maps[j]['person']
+                graph.union(person, activity)
+            score = graph.largestPeopleGroup
+            if(score < best_score):
+                best_score = score
+        return score
+
 
 class PlottedStoreShops(DrugStoreCoffeeShops):
     def __init__(self, n = 20, k = 5, location_set = [5, 5]):
