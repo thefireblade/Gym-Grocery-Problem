@@ -18,6 +18,60 @@ def findMethod(gObj, func):
     return -1
 
 if __name__ == "__main__":
+    b = PlottedStoreShops(0, 0, [0, 0])
+    function_names = [b.partition_lgraph_spectral.__name__, b.partition_lgraph_louvain.__name__]
+    files = [
+        "./graph_files/bench0/test_graph_n=35_k=2_stores=4_gyms=4.gml",
+        "./graph_files/bench0/test_graph_n=25_k=2_stores=3_gyms=3.gml",
+        "./graph_files/bench0/test_graph_n=20_k=2_stores=3_gyms=3.gml",
+        "./graph_files/bench0/test_graph_n=30_k=2_stores=4_gyms=4.gml",
+        "./graph_files/bench0/test_graph_n=40_k=2_stores=4_gyms=4.gml",
+        "./graph_files/bench0/test_graph_n=50_k=2_stores=5_gyms=5.gml"
+    ]
+    path = "./graph_files/bench0/"
+    for graph in files:
+        timing_results = []
+        component_results = []
+        test = 200
+        b = PlottedStoreShops(0, 0, [0, 0])
+        b.import_lgraph(graph, graph)
+        people = b.n
+        stores = len(b.C[0])
+        k = 2
+        gyms = len(b.C[1])
+
+        #Writing data
+        for function_name in function_names:
+            headers = ['Max Component Size', 'Compute Time (s)', function_name]
+            csv_file = "{path}results_{function}_{people}_k={k}_stores={stores}_gyms={gyms}.csv".format(
+                path=path, function = function_name ,people=people, gyms=gyms, stores=stores, k=k
+            )
+            passed = 0
+            for i in range(test):
+                print("Computing test {i}".format(i = i))
+                c = PlottedStoreShops(0, 0, [0, 0])
+                c.import_lgraph(graph, graph)
+                start_time = time.perf_counter()
+                findMethod(c, function_name)
+                c.G_to_disjoint()
+                result = c.runScen3_1_rand()
+                end_time = time.perf_counter() - start_time
+                del c
+                if(result == -1):
+                    continue
+                timing_results.append(end_time)
+                component_results.append(result)
+                print("Finished with size {size}".format(size=result))
+                passed += 1
+            f = open(csv_file, "w")
+            f.close
+            with open(csv_file, 'w', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerow(headers)
+                for result in timing_results:
+                    writer.writerow([component_results[i], result])
+
+
     # people = 1600
     # gyms = 20
     # stores = 20
@@ -27,7 +81,7 @@ if __name__ == "__main__":
     # b = PlottedStoreShops(0, 0, [0, 0])
     # #Test graph
     # function_names = [b.runScen3Random.__name__]
-     #b.partition_lgraph_spectral.__name__, b.partition_lgraph_louvain.__name__]
+    #  b.partition_lgraph_spectral.__name__, b.partition_lgraph_louvain.__name__]
     # for b in range(5,6):
     #     path = "./graph_files/bench{b}/".format(b=b)
     #     custom_graph = "{path}test_graph_n={people}_k={k}_stores={stores}_gyms={gyms}.gml".format(
@@ -129,17 +183,17 @@ if __name__ == "__main__":
     # plt.show()
 
     ######################################### GENERATE GRAPH CODE ############################################
-    k = 2
-    path = "./graph_files/bench{b}/".format(b=0)
-    people = 40
-    stores = 4
-    gyms = 4
-    custom_graph = "{path}test_graph_n={people}_k={k}_stores={stores}_gyms={gyms}.gml".format(
-        path=path, people=people, gyms=gyms, stores=stores, k=k
-    )
-    data_path = "{path}location_data_n={people}_k={k}_stores={stores}_gyms={gyms}.json".format(
-        path=path, people=people, gyms=gyms, stores=stores, k=k
-    )
-    b = PlottedStoreShops(people, k, [gyms, stores])
-    b.setup()
-    b.export(custom_graph, data_path)
+    # k = 2
+    # path = "./graph_files/bench{b}/".format(b=0)
+    # people = 40
+    # stores = 4
+    # gyms = 4
+    # custom_graph = "{path}test_graph_n={people}_k={k}_stores={stores}_gyms={gyms}.gml".format(
+    #     path=path, people=people, gyms=gyms, stores=stores, k=k
+    # )
+    # data_path = "{path}location_data_n={people}_k={k}_stores={stores}_gyms={gyms}.json".format(
+    #     path=path, people=people, gyms=gyms, stores=stores, k=k
+    # )
+    # b = PlottedStoreShops(people, k, [gyms, stores])
+    # b.setup()
+    # b.export(custom_graph, data_path)
