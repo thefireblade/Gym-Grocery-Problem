@@ -19,7 +19,7 @@ def findMethod(gObj, func):
 
 if __name__ == "__main__":
     b = PlottedStoreShops(0, 0, [0, 0])
-    function_names = [b.partition_lgraph_spectral.__name__, b.partition_lgraph_louvain.__name__]
+    function_names = [b.runScen3_1_rand.__name__, b.partition_lgraph_louvain.__name__]
     files = [
         "./graph_files/bench0/test_graph_n=35_k=2_stores=4_gyms=4.gml",
         "./graph_files/bench0/test_graph_n=25_k=2_stores=3_gyms=3.gml",
@@ -52,8 +52,8 @@ if __name__ == "__main__":
                 c = PlottedStoreShops(0, 0, [0, 0])
                 c.import_lgraph(graph, graph)
                 start_time = time.perf_counter()
-                findMethod(c, function_name)
-                c.G_to_disjoint()
+                # findMethod(c, function_name)
+                # c.G_to_disjoint()
                 result = c.runScen3_1_rand()
                 end_time = time.perf_counter() - start_time
                 del c
