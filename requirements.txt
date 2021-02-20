@@ -3,3 +3,4 @@ scipy
 networkx[full]
 matplotlib
 geocoder
+python-louvain
