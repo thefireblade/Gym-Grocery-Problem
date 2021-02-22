@@ -48,6 +48,27 @@ def invalid_nodes_dc_graph(graph, n, d):
             invalid_people.append(person)
     return invalid_people
 
+# Takes in a nx graph and determines whether the graph is valid or not based on our specifications. Works on any number of activities.
+# graph = nx graph
+# n = number of people
+# activities = list of occurences of each activity type. ie. [3, 2] (3 stores and 2 gyms)
+def valid_graph(graph, n, activities):
+    activity_indices = [(n + sum(activities[0: i]), n + sum(activities[0: i + 1])) for i in range(len(activities))]
+    # print(activity_indices) #DEBUG CONNECTIONS
+    for person in range(n):
+        has_activities = [False for _ in activity_indices]
+        neighbors = [n for n in graph.neighbors(person)]
+        # print("person: {person} has neighbors: {neighbors}".format(person=person, neighbors = [n for n in neighbors]) ) #DEBUG CONNECTIONS
+        for neighbor in neighbors:
+            for i in range(len(activity_indices)):
+                if(neighbor < activity_indices[i][1] and neighbor >= activity_indices[i][0]):
+                    has_activities[i] = True
+                    break
+        # print(has_activities) #DEBUG CONNECTIONS
+        if not all(has_activities):
+            return False
+    return True
+
 # Take a graph and remove all of the edges to the nodes that are not part of it's partition
 # graph : DrugStoreCoffeeShop graph that contains all of the connected nodes
 # partition_list : numbers that represent which partition belongs to which group, must be parsed correctly to work

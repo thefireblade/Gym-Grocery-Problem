@@ -13,11 +13,12 @@ class DisjointNode():
         self.color = secrets.token_hex(3) #Generate a random 6 digit Hex for color
 
 class DisjointSetGraph():
-    def __init__(self, vertices):
+    def __init__(self, vertices, numPeople):
         self.V = vertices #No. of vertices 
         self.graph = nx.Graph()
         self.nodes = [] # List of DisjointNodes
         self.largestPeopleGroup = 0
+        self.numPeople = numPeople
 
     def initVertices(self, graph = True):
         if(graph):
@@ -114,8 +115,7 @@ class DisjointSetGraph():
 # -Adds the ability to test a union of two nodes at indexes s1, s2
 class GymGroceryGraph(DisjointSetGraph):
     def __init__(self, vertices, numPeople):
-        super().__init__(vertices)
-        self.numPeople = numPeople
+        super().__init__(vertices, numPeople)
 
     # Initializes the graph except all people nodes have a component size of 1
     def initVertices(self, graph=True):
