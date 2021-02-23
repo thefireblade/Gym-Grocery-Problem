@@ -128,13 +128,16 @@ def generate_graph(people, activities, activities_per_person, num_edges):
     return result
 
 def main():
-    n = 5
-    activities = [2,2]
-    ranges = [(1,1), (2,2)] # Range of values f
-    noise = 7
+    n = 50
+    activities = [6,6]
+    ranges = [(2,2), (2,2)] # Range of values f
+    noise = n
     obj = generate_graph(n, activities, ranges, noise)
     print("opt: {opt} score: {score}".format(opt=obj['opt'], score = obj['graph_obj'].largestPeopleGroup)) # DEBUG CONNECTIONS
-    # print(valid_graph(obj['graph_obj'].graph, n, activities)) # DEBUG CONNECTIONS
-    export_graph(obj['graph'], n, activities, './new_graph_opt.gml')
+    print(valid_graph(obj['graph_obj'].graph, n, activities)) # DEBUG CONNECTIONS
+    export_graph(obj['graph'], n, activities, 
+    './test_graph_n={n}_k={k}_stores={stores}_gyms={gyms}_opt={opt}.gml'.format(
+        n=n, stores=activities[0], gyms=activities[1], k=3, opt=obj['opt']
+    ))
 if __name__ == "__main__":
     main()
