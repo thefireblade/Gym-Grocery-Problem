@@ -128,8 +128,8 @@ def generate_graph(people, activities, activities_per_person, num_edges):
     return result
 
 def main():
-    n = 50
-    activities = [6,6]
+    n = 400
+    activities = [20,20]
     ranges = [(2,2), (2,2)] # Range of values f
     noise = n
     obj = generate_graph(n, activities, ranges, noise)
