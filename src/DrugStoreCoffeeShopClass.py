@@ -732,7 +732,7 @@ class DrugStoreCoffeeShops():
             self.gObj.initVertices()
         #init the first row for the list_queue, runs in O(n*k*|m|) or O(V) if imported L graph
         list_queue = [deque() for i in range(vertices)]
-        if self.person_maps:
+        if self.person_maps != None:
             list_queue[0].extendleft(self.person_maps)
         else:
             person_maps = []

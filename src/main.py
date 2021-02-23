@@ -19,14 +19,19 @@ def findMethod(gObj, func):
 
 if __name__ == "__main__":
     b = PlottedStoreShops(0, 0, [0, 0])
-    function_names = [b.runScen3_1_rand.__name__, b.partition_lgraph_louvain.__name__]
+    function_names = [b.runScen2_2Random.__name__]
     files = [
-        "./graph_files/bench0/test_graph_n=35_k=2_stores=4_gyms=4.gml",
-        "./graph_files/bench0/test_graph_n=25_k=2_stores=3_gyms=3.gml",
-        "./graph_files/bench0/test_graph_n=20_k=2_stores=3_gyms=3.gml",
-        "./graph_files/bench0/test_graph_n=30_k=2_stores=4_gyms=4.gml",
-        "./graph_files/bench0/test_graph_n=40_k=2_stores=4_gyms=4.gml",
-        "./graph_files/bench0/test_graph_n=50_k=2_stores=5_gyms=5.gml"
+        "../data/test_graph_n=25_k=3_stores=5_gyms=5_opt=5.gml",
+        "../data/test_graph_n=30_k=3_stores=5_gyms=5_opt=6.gml",
+        "../data/test_graph_n=35_k=3_stores=5_gyms=5_opt=7.gml",
+        "../data/test_graph_n=40_k=3_stores=6_gyms=6_opt=7.gml",
+        "../data/test_graph_n=45_k=3_stores=6_gyms=6_opt=8.gml",
+        "../data/test_graph_n=50_k=3_stores=6_gyms=6_opt=9.gml",
+        "../data/test_graph_n=100_k=3_stores=10_gyms=10_opt=10.gml",
+        "../data/test_graph_n=150_k=3_stores=10_gyms=10_opt=15.gml",
+        "../data/test_graph_n=200_k=3_stores=15_gyms=15_opt=14.gml",
+        "../data/test_graph_n=250_k=3_stores=20_gyms=20_opt=13.gml",
+        "../data/test_graph_n=400_k=3_stores=20_gyms=20_opt=20.gml"
     ]
     path = "./graph_files/bench0/"
     for graph in files:
@@ -48,13 +53,14 @@ if __name__ == "__main__":
             )
             passed = 0
             for i in range(test):
-                print("Computing test {i}".format(i = i))
+                print("Computing test {i} of function {function}".format(i = i, function=function_name))
                 c = PlottedStoreShops(0, 0, [0, 0])
                 c.import_lgraph(graph, graph)
                 start_time = time.perf_counter()
                 # findMethod(c, function_name)
+                result = findMethod(c, function_name)
                 # c.G_to_disjoint()
-                result = c.runScen3_1_rand()
+                # result = c.runScen3_1_rand()
                 end_time = time.perf_counter() - start_time
                 del c
                 if(result == -1):
