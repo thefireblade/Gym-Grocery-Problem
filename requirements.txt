@@ -4,3 +4,4 @@ networkx[full]
 matplotlib
 geocoder
 python-louvain
+sklearn
