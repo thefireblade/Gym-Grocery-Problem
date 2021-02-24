@@ -19,8 +19,18 @@ def findMethod(gObj, func):
 
 if __name__ == "__main__":
     b = PlottedStoreShops(0, 0, [0, 0])
-    function_names = [b.runScen2_2Random.__name__]
+    function_names = [b.runScen2_2Random.__name__, b.runScen3_1_rand.__name__]
     files = [
+        "../data/harder_graph_n=25_k=2_stores=5_gyms=5_opt=5.gml",
+        "../data/harder_graph_n=30_k=2_stores=5_gyms=5_opt=6.gml",
+        "../data/harder_graph_n=35_k=2_stores=6_gyms=6_opt=6.gml",
+        "../data/harder_graph_n=40_k=2_stores=7_gyms=7_opt=6.gml",
+        "../data/harder_graph_n=50_k=2_stores=8_gyms=8_opt=7.gml",
+        "../data/harder_graph_n=100_k=2_stores=10_gyms=10_opt=10.gml",
+        "../data/harder_graph_n=200_k=2_stores=20_gyms=20_opt=10.gml",
+        "../data/harder_graph_n=400_k=2_stores=20_gyms=20_opt=20.gml",
+        "../data/harder_graph_n=800_k=2_stores=40_gyms=40_opt=20.gml",
+        "../data/harder_graph_n=1600_k=2_stores=40_gyms=40_opt=40.gml",
         "../data/test_graph_n=25_k=3_stores=5_gyms=5_opt=5.gml",
         "../data/test_graph_n=30_k=3_stores=5_gyms=5_opt=6.gml",
         "../data/test_graph_n=35_k=3_stores=5_gyms=5_opt=7.gml",
@@ -33,10 +43,11 @@ if __name__ == "__main__":
         "../data/test_graph_n=250_k=3_stores=20_gyms=20_opt=13.gml",
         "../data/test_graph_n=400_k=3_stores=20_gyms=20_opt=20.gml"
     ]
-    path = "./graph_files/bench0/"
+    path = "./graph_files/bench0_1/"
+    tb = 0
     for graph in files:
-        timing_results = []
-        component_results = []
+        if(tb == 10):
+            path = "./graph_files/bench0_2/"
         test = 200
         b = PlottedStoreShops(0, 0, [0, 0])
         b.import_lgraph(graph, graph)
@@ -44,14 +55,16 @@ if __name__ == "__main__":
         stores = len(b.C[0])
         k = 2
         gyms = len(b.C[1])
-
-        #Writing data
+        tb += 1
+        # Writing data
         for function_name in function_names:
             headers = ['Max Component Size', 'Compute Time (s)', function_name]
             csv_file = "{path}results_{function}_{people}_k={k}_stores={stores}_gyms={gyms}.csv".format(
                 path=path, function = function_name ,people=people, gyms=gyms, stores=stores, k=k
             )
             passed = 0
+            component_results = []
+            timing_results = []
             for i in range(test):
                 print("Computing test {i} of function {function}".format(i = i, function=function_name))
                 c = PlottedStoreShops(0, 0, [0, 0])
@@ -74,8 +87,8 @@ if __name__ == "__main__":
             with open(csv_file, 'w', newline='') as f:
                 writer = csv.writer(f)
                 writer.writerow(headers)
-                for result in timing_results:
-                    writer.writerow([component_results[i], result])
+                for i in range(len(timing_results)):
+                    writer.writerow([component_results[i], timing_results[i]])
 
 
     # people = 1600
