@@ -42,19 +42,24 @@ if __name__ == "__main__":
         # "../data/test_graph_n=200_k=3_stores=15_gyms=15_opt=14.gml",
         # "../data/test_graph_n=250_k=3_stores=20_gyms=20_opt=13.gml",
         # "../data/test_graph_n=400_k=3_stores=20_gyms=20_opt=20.gml"
-        "./graph_files/bench0_3/noise_level=1_graph_n=1000_k=2_stores=40_gyms=40_opt=25.gml",
-        "./graph_files/bench0_3/noise_level=1_graph_n=2000_k=2_stores=40_gyms=40_opt=50.gml",
-        "./graph_files/bench0_3/noise_level=1_graph_n=4000_k=2_stores=40_gyms=40_opt=100.gml",
-        "./graph_files/bench0_3/noise_level=1_graph_n=8000_k=2_stores=40_gyms=40_opt=200.gml",
-        "./graph_files/bench0_3/noise_level=1_graph_n=16000_k=2_stores=40_gyms=40_opt=400.gml",
-        "./graph_files/bench0_3/noise_level=1_graph_n=32000_k=2_stores=80_gyms=80_opt=400.gml",
-        "./graph_files/bench0_3/noise_level=1_graph_n=64000_k=2_stores=160_gyms=160_opt=400.gml"
+        # "./graph_files/bench0_3/noise_level=1_graph_n=1000_k=2_stores=40_gyms=40_opt=25.gml",
+        # "./graph_files/bench0_3/noise_level=1_graph_n=2000_k=2_stores=40_gyms=40_opt=50.gml",
+        # "./graph_files/bench0_3/noise_level=1_graph_n=4000_k=2_stores=40_gyms=40_opt=100.gml",
+        # "./graph_files/bench0_3/noise_level=1_graph_n=8000_k=2_stores=40_gyms=40_opt=200.gml",
+        # "./graph_files/bench0_3/noise_level=1_graph_n=16000_k=2_stores=40_gyms=40_opt=400.gml",
+        # "./graph_files/bench0_3/noise_level=1_graph_n=32000_k=2_stores=80_gyms=80_opt=400.gml",
+        # "./graph_files/bench0_3/noise_level=1_graph_n=64000_k=2_stores=160_gyms=160_opt=400.gml",
+        "./graph_files/bench0_3/noise_level=1_graph_n=128000_k=2_stores=160_gyms=160_opt=800.gml",
+        "./graph_files/bench0_3/noise_level=1_graph_n=256000_k=2_stores=320_gyms=320_opt=800.gml",
+        
     ]
+    bench_4 = ['./graph_files/bench0_4/noise_level=1_graph_n=100_k=1_stores=10_gyms=10_opt=10.gml', './graph_files/bench0_4/noise_level=1_graph_n=150_k=1_stores=15_gyms=15_opt=10.gml', './graph_files/bench0_4/noise_level=1_graph_n=1600_k=1_stores=160_gyms=160_opt=10.gml', './graph_files/bench0_4/noise_level=1_graph_n=200_k=1_stores=20_gyms=20_opt=10.gml', './graph_files/bench0_4/noise_level=1_graph_n=25_k=1_stores=5_gyms=5_opt=5.gml', './graph_files/bench0_4/noise_level=1_graph_n=30_k=1_stores=5_gyms=5_opt=6.gml', './graph_files/bench0_4/noise_level=1_graph_n=35_k=1_stores=6_gyms=6_opt=6.gml', './graph_files/bench0_4/noise_level=1_graph_n=4000_k=1_stores=200_gyms=200_opt=20.gml', './graph_files/bench0_4/noise_level=1_graph_n=400_k=1_stores=40_gyms=40_opt=10.gml', './graph_files/bench0_4/noise_level=1_graph_n=40_k=1_stores=7_gyms=7_opt=6.gml', './graph_files/bench0_4/noise_level=1_graph_n=45_k=1_stores=8_gyms=8_opt=6.gml', './graph_files/bench0_4/noise_level=1_graph_n=50_k=1_stores=9_gyms=9_opt=6.gml', './graph_files/bench0_4/noise_level=1_graph_n=800_k=1_stores=80_gyms=80_opt=10.gml']
+    bench_4_path = './graph_files/bench0_4/'
     path = "./graph_files/bench0_3/"
     tb = 0
     for graph in files:
-        # if(tb == 10):
-        #     path = "./graph_files/bench0_2/"
+        # if(tb == 7):
+        #     function_names.append(b.partition_lgraph_louvain.__name__)
         test = 200
         b = PlottedStoreShops(0, 0, [0, 0])
         b.import_lgraph(graph, graph)
@@ -64,38 +69,38 @@ if __name__ == "__main__":
         gyms = len(b.C[1])
         tb += 1
         # Writing data
-        # for function_name in function_names:
-        #     headers = ['Max Component Size', 'Compute Time (s)', function_name]
-        #     csv_file = "{path}results_{function}_{people}_k={k}_stores={stores}_gyms={gyms}.csv".format(
-        #         path=path, function = function_name ,people=people, gyms=gyms, stores=stores, k=k
-        #     )
-        #     passed = 0
-        #     component_results = []
-        #     timing_results = []
-        #     for i in range(test):
-        #         print("Computing test {i} of function {function}".format(i = i, function=function_name))
-        #         c = PlottedStoreShops(0, 0, [0, 0])
-        #         c.import_lgraph(graph, graph)
-        #         start_time = time.perf_counter()
-        #         findMethod(c, function_name)
-        #         # result = findMethod(c, function_name)
-        #         c.G_to_disjoint()
-        #         result = c.runScen3_1_rand()
-        #         end_time = time.perf_counter() - start_time
-        #         del c
-        #         if(result == -1):
-        #             continue
-        #         timing_results.append(end_time)
-        #         component_results.append(result)
-        #         print("Finished with size {size}".format(size=result))
-        #         passed += 1
-        #     f = open(csv_file, "w")
-        #     f.close
-        #     with open(csv_file, 'w', newline='') as f:
-        #         writer = csv.writer(f)
-        #         writer.writerow(headers)
-        #         for i in range(len(timing_results)):
-        #             writer.writerow([component_results[i], timing_results[i]])
+        for function_name in function_names:
+            headers = ['Max Component Size', 'Compute Time (s)', function_name]
+            csv_file = "{path}results_{function}_{people}_k={k}_stores={stores}_gyms={gyms}.csv".format(
+                path=path, function = function_name ,people=people, gyms=gyms, stores=stores, k=k
+            )
+            passed = 0
+            component_results = []
+            timing_results = []
+            for i in range(test):
+                print("Computing test {i} of function {function}".format(i = i, function=function_name))
+                c = PlottedStoreShops(0, 0, [0, 0])
+                c.import_lgraph(graph, graph)
+                start_time = time.perf_counter()
+                findMethod(c, function_name)
+                # result = findMethod(c, function_name)
+                c.G_to_disjoint()
+                result = c.runScen3_1_rand()
+                end_time = time.perf_counter() - start_time
+                del c
+                if(result == -1):
+                    continue
+                timing_results.append(end_time)
+                component_results.append(result)
+                print("Finished with size {size}".format(size=result))
+                passed += 1
+            f = open(csv_file, "w")
+            f.close
+            with open(csv_file, 'w', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerow(headers)
+                for i in range(len(timing_results)):
+                    writer.writerow([component_results[i], timing_results[i]])
 
 
     # people = 1600
