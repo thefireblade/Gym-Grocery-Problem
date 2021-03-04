@@ -127,26 +127,24 @@ class DrugStoreCoffeeShops():
         self.imported = True
     
     def partition_lgraph_spectral(self):
-        if(self.G):
+        if(self.G and self.C):
             orig_graph = self.G.__class__()
             orig_graph.add_nodes_from(self.G)
             orig_graph.add_edges_from(self.G.edges)
 
             adj_mat = nx.to_numpy_matrix(self.G)
-
-            for i in range(2, 100):
-                # Cluster
-                sc = SpectralClustering(i, affinity='precomputed', n_init=100)
-                sc.fit(adj_mat)
-                partitioning_functions.finish_partition(self.G, sc.labels_)
-                illegal_people = partitioning_functions.invalid_nodes_dc_graph(self.G, self.n, len(self.C[0]))
-                if(illegal_people):
-                    partitioning_functions.fix_graph(self.G, orig_graph, illegal_people)
-                    break
-                # Restore
-                self.G.clear()
-                self.G.add_nodes_from(orig_graph)
-                self.G.add_edges_from(orig_graph.edges)
+            smallest = min([len(location) for location in self.C])
+            # print("the smallest for this partition is {smallest}".format(smallest = smallest))
+            sc = SpectralClustering(smallest, affinity='precomputed', n_init=100)
+            sc.fit(adj_mat)
+            partitioning_functions.finish_partition(self.G, sc.labels_)
+            illegal_people = partitioning_functions.invalid_nodes_dc_graph(self.G, self.n, len(self.C[0]))
+            if(illegal_people):
+                partitioning_functions.fix_graph(self.G, orig_graph, illegal_people)
+            # Restore
+            self.G.clear()
+            self.G.add_nodes_from(orig_graph)
+            self.G.add_edges_from(orig_graph.edges)
 
     def partition_lgraph_louvain(self): 
         if(self.G):

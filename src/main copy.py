@@ -19,43 +19,46 @@ def findMethod(gObj, func):
 
 if __name__ == "__main__":
     b = PlottedStoreShops(0, 0, [0, 0])
-    function_names = [b.partition_lgraph_louvain.__name__, b.partition_lgraph_spectral.__name__]
+    function_names = [b.runScen2_2Random.__name__, b.runScen3_1_rand.__name__]
     files = [
-        # "../data/harder_graph_n=25_k=2_stores=5_gyms=5_opt=5.gml",
-        # "../data/harder_graph_n=30_k=2_stores=5_gyms=5_opt=6.gml",
-        # "../data/harder_graph_n=35_k=2_stores=6_gyms=6_opt=6.gml",
-        # "../data/harder_graph_n=40_k=2_stores=7_gyms=7_opt=6.gml",
-        # "../data/harder_graph_n=50_k=2_stores=8_gyms=8_opt=7.gml",
-        # "../data/harder_graph_n=100_k=2_stores=10_gyms=10_opt=10.gml",
-        # "../data/harder_graph_n=200_k=2_stores=20_gyms=20_opt=10.gml",
-        # "../data/harder_graph_n=400_k=2_stores=20_gyms=20_opt=20.gml",
-        # "../data/harder_graph_n=800_k=2_stores=40_gyms=40_opt=20.gml",
-        # "../data/harder_graph_n=1600_k=2_stores=40_gyms=40_opt=40.gml",
-        # "../data/test_graph_n=25_k=3_stores=5_gyms=5_opt=5.gml",
-        # "../data/test_graph_n=30_k=3_stores=5_gyms=5_opt=6.gml",
-        # "../data/test_graph_n=35_k=3_stores=5_gyms=5_opt=7.gml",
-        # "../data/test_graph_n=40_k=3_stores=6_gyms=6_opt=7.gml",
-        # "../data/test_graph_n=45_k=3_stores=6_gyms=6_opt=8.gml",
-        # "../data/test_graph_n=50_k=3_stores=6_gyms=6_opt=9.gml",
-        # "../data/test_graph_n=100_k=3_stores=10_gyms=10_opt=10.gml",
-        # "../data/test_graph_n=150_k=3_stores=10_gyms=10_opt=15.gml",
-        # "../data/test_graph_n=200_k=3_stores=15_gyms=15_opt=14.gml",
-        # "../data/test_graph_n=250_k=3_stores=20_gyms=20_opt=13.gml",
-        # "../data/test_graph_n=400_k=3_stores=20_gyms=20_opt=20.gml"
-        # "./graph_files/bench0_3/noise_level=1_graph_n=1000_k=2_stores=40_gyms=40_opt=25.gml",
-        # "./graph_files/bench0_3/noise_level=1_graph_n=2000_k=2_stores=40_gyms=40_opt=50.gml",
-        # "./graph_files/bench0_3/noise_level=1_graph_n=4000_k=2_stores=40_gyms=40_opt=100.gml",
-        # "./graph_files/bench0_3/noise_level=1_graph_n=8000_k=2_stores=40_gyms=40_opt=200.gml",
-        # "./graph_files/bench0_3/noise_level=1_graph_n=16000_k=2_stores=40_gyms=40_opt=400.gml",
-        # "./graph_files/bench0_3/noise_level=1_graph_n=32000_k=2_stores=80_gyms=80_opt=400.gml",
-        # "./graph_files/bench0_3/noise_level=1_graph_n=64000_k=2_stores=160_gyms=160_opt=400.gml",      
+        # "./graph_files/bench0_1/harder_graph_n=25_k=2_stores=5_gyms=5_opt=5.gml",
+        # "./graph_files/bench0_1/harder_graph_n=30_k=2_stores=5_gyms=5_opt=6.gml",
+        # "./graph_files/bench0_1/harder_graph_n=35_k=2_stores=6_gyms=6_opt=6.gml",
+        # "./graph_files/bench0_1/harder_graph_n=40_k=2_stores=7_gyms=7_opt=6.gml",
+        # "./graph_files/bench0_1/harder_graph_n=50_k=2_stores=8_gyms=8_opt=7.gml",
+        # "./graph_files/bench0_1/harder_graph_n=100_k=2_stores=10_gyms=10_opt=10.gml",
+        # "./graph_files/bench0_1/harder_graph_n=200_k=2_stores=20_gyms=20_opt=10.gml",
+        # "./graph_files/bench0_1/harder_graph_n=400_k=2_stores=20_gyms=20_opt=20.gml",
+        # "./graph_files/bench0_1/harder_graph_n=800_k=2_stores=40_gyms=40_opt=20.gml",
+        # "./graph_files/bench0_1/harder_graph_n=1600_k=2_stores=40_gyms=40_opt=40.gml",
+        # "./graph_files/bench0_2/test_graph_n=25_k=3_stores=5_gyms=5_opt=5.gml",
+        # "./graph_files/bench0_2/test_graph_n=30_k=3_stores=5_gyms=5_opt=6.gml",
+        # "./graph_files/bench0_2/test_graph_n=35_k=3_stores=5_gyms=5_opt=7.gml",
+        # "./graph_files/bench0_2/test_graph_n=40_k=3_stores=6_gyms=6_opt=7.gml",
+        # "./graph_files/bench0_2/test_graph_n=45_k=3_stores=6_gyms=6_opt=8.gml",
+        # "./graph_files/bench0_2/test_graph_n=50_k=3_stores=6_gyms=6_opt=9.gml",
+        # "./graph_files/bench0_2/test_graph_n=100_k=3_stores=10_gyms=10_opt=10.gml",
+        # "./graph_files/bench0_2/test_graph_n=150_k=3_stores=10_gyms=10_opt=15.gml",
+        # "./graph_files/bench0_2/test_graph_n=200_k=3_stores=15_gyms=15_opt=14.gml",
+        # "./graph_files/bench0_2/test_graph_n=250_k=3_stores=20_gyms=20_opt=13.gml",
+        # "./graph_files/bench0_2/test_graph_n=400_k=3_stores=20_gyms=20_opt=20.gml",
+        "./graph_files/bench0_3/noise_level=1_graph_n=1000_k=2_stores=40_gyms=40_opt=25.gml",
+        "./graph_files/bench0_3/noise_level=1_graph_n=2000_k=2_stores=40_gyms=40_opt=50.gml",
+        "./graph_files/bench0_3/noise_level=1_graph_n=4000_k=2_stores=40_gyms=40_opt=100.gml",
+        "./graph_files/bench0_3/noise_level=1_graph_n=8000_k=2_stores=40_gyms=40_opt=200.gml",
+        "./graph_files/bench0_3/noise_level=1_graph_n=16000_k=2_stores=40_gyms=40_opt=400.gml",
+        "./graph_files/bench0_3/noise_level=1_graph_n=32000_k=2_stores=80_gyms=80_opt=400.gml",
+        "./graph_files/bench0_3/noise_level=1_graph_n=64000_k=2_stores=160_gyms=160_opt=400.gml",
+        "./graph_files/bench0_3/noise_level=1_graph_n=128000_k=2_stores=160_gyms=160_opt=800.gml",
+        './graph_files/bench0_4/noise_level=1_graph_n=100_k=1_stores=10_gyms=10_opt=10.gml', './graph_files/bench0_4/noise_level=1_graph_n=150_k=1_stores=15_gyms=15_opt=10.gml', './graph_files/bench0_4/noise_level=1_graph_n=1600_k=1_stores=160_gyms=160_opt=10.gml', './graph_files/bench0_4/noise_level=1_graph_n=200_k=1_stores=20_gyms=20_opt=10.gml', './graph_files/bench0_4/noise_level=1_graph_n=25_k=1_stores=5_gyms=5_opt=5.gml', './graph_files/bench0_4/noise_level=1_graph_n=30_k=1_stores=5_gyms=5_opt=6.gml', './graph_files/bench0_4/noise_level=1_graph_n=35_k=1_stores=6_gyms=6_opt=6.gml', './graph_files/bench0_4/noise_level=1_graph_n=4000_k=1_stores=200_gyms=200_opt=20.gml', './graph_files/bench0_4/noise_level=1_graph_n=400_k=1_stores=40_gyms=40_opt=10.gml', './graph_files/bench0_4/noise_level=1_graph_n=40_k=1_stores=7_gyms=7_opt=6.gml', './graph_files/bench0_4/noise_level=1_graph_n=45_k=1_stores=8_gyms=8_opt=6.gml', './graph_files/bench0_4/noise_level=1_graph_n=50_k=1_stores=9_gyms=9_opt=6.gml', './graph_files/bench0_4/noise_level=1_graph_n=800_k=1_stores=80_gyms=80_opt=10.gml'
     ]
     bench_4 = ['./graph_files/bench0_4/noise_level=1_graph_n=100_k=1_stores=10_gyms=10_opt=10.gml', './graph_files/bench0_4/noise_level=1_graph_n=150_k=1_stores=15_gyms=15_opt=10.gml', './graph_files/bench0_4/noise_level=1_graph_n=1600_k=1_stores=160_gyms=160_opt=10.gml', './graph_files/bench0_4/noise_level=1_graph_n=200_k=1_stores=20_gyms=20_opt=10.gml', './graph_files/bench0_4/noise_level=1_graph_n=25_k=1_stores=5_gyms=5_opt=5.gml', './graph_files/bench0_4/noise_level=1_graph_n=30_k=1_stores=5_gyms=5_opt=6.gml', './graph_files/bench0_4/noise_level=1_graph_n=35_k=1_stores=6_gyms=6_opt=6.gml', './graph_files/bench0_4/noise_level=1_graph_n=4000_k=1_stores=200_gyms=200_opt=20.gml', './graph_files/bench0_4/noise_level=1_graph_n=400_k=1_stores=40_gyms=40_opt=10.gml', './graph_files/bench0_4/noise_level=1_graph_n=40_k=1_stores=7_gyms=7_opt=6.gml', './graph_files/bench0_4/noise_level=1_graph_n=45_k=1_stores=8_gyms=8_opt=6.gml', './graph_files/bench0_4/noise_level=1_graph_n=50_k=1_stores=9_gyms=9_opt=6.gml', './graph_files/bench0_4/noise_level=1_graph_n=800_k=1_stores=80_gyms=80_opt=10.gml']
-    path = './graph_files/bench0_4/'
+    path = './graph_files/bench0_3/'
     tb = 0
-    for graph in bench_4:
-        # if(tb == 7):
-        #     function_names.append(b.partition_lgraph_louvain.__name__)
+    for graph in files:
+        if(tb == 8):
+            path = './graph_files/bench0_4/'
+            # function_names.append(b.partition_lgraph_louvain.__name__)
         test = 200
         b = PlottedStoreShops(0, 0, [0, 0])
         b.import_lgraph(graph, graph)
@@ -78,10 +81,10 @@ if __name__ == "__main__":
                 c = PlottedStoreShops(0, 0, [0, 0])
                 c.import_lgraph(graph, graph)
                 start_time = time.perf_counter()
-                findMethod(c, function_name)
-                # result = findMethod(c, function_name)
-                c.G_to_disjoint()
-                result = c.runScen3_1_rand()
+                # findMethod(c, function_name)
+                result = findMethod(c, function_name)
+                # c.G_to_disjoint()
+                # result = c.runScen3_1_rand()
                 end_time = time.perf_counter() - start_time
                 del c
                 if(result == -1):
