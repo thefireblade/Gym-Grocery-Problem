@@ -1,3 +1,7 @@
+'''
+Jason Huang @ SBU Algorithms Reading Breakout Group
+'''
+
 import networkx as nx
 import numpy as np
 import random
